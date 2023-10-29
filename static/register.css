@@ -1,0 +1,155 @@
+.container-register {
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 8px;
+  border-color: #a28089;
+  border-style: solid;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.container-register header {
+  font-size: 1.2rem;
+  color: #a28089; /* Text color changed to #a28089 */
+  font-weight: 600;
+  text-align: center;
+}
+
+.container-register .forms {
+  margin-top: 15px;
+}
+
+.forms .input-box {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.input-box label {
+  color: #a28089; /* Text color changed to #a28089 */
+}
+
+.forms :where(.input-box input, .select-box) {
+  position: relative;
+  height: 35px;
+  width: 100%;
+  outline: none;
+  font-size: 1rem;
+  color: #a28089; /* Text color changed to #a28089 */
+  margin-top: 5px;
+  border: 1px solid #EE4E34;
+  border-radius: 6px;
+  padding: 0 15px;
+  background: #ffffff;
+}
+
+.input-box input:focus {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.forms .column {
+  display: flex;
+  column-gap: 15px;
+}
+
+.forms .gender-box {
+  margin-top: 10px;
+}
+
+.gender {
+  color: #a28089
+}
+
+.forms :where(.gender-option, .gender) {
+  display: flex;
+  align-items: center;
+  column-gap: 50px;
+  flex-wrap: wrap;
+}
+
+.forms .gender {
+  column-gap: 5px;
+}
+
+.gender input {
+  accent-color: #EE4E34;
+}
+
+.forms :where(.gender input, .gender label) {
+  cursor: pointer;
+}
+
+.gender label {
+  color: #a28089; /* Text color changed to #a28089 */
+}
+
+.address :where(input, .select-box) {
+  margin-top: 10px;
+}
+
+.select-box select {
+  height: 100%;
+  width: 100%;
+  outline: none;
+  border: none;
+  color: #a28089; /* Text color changed to #a28089 */
+  font-size: 1rem;
+  background: #ffffff;
+}
+
+.submit {
+  height: 40px;
+  width: 100%;
+  --color: #a28089; /* Text color changed to #a28089 */
+  background-color: transparent;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-top: 15px;
+  border: 1px solid;
+  border-color: #EE4E34;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color);
+  z-index: 1;
+}
+
+.submit:before, .submit::after {
+  content: '';
+  display: block;
+  position: absolute;
+  border-radius: 6px; /* Match the button's border-radius */
+  z-index: -1;
+  background-color: var(--color);
+  transition: all 0.1s ease;
+}
+
+.submit:before {
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+}
+
+.submit::after {
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 100%;
+}
+
+.submit:hover::before, .submit:hover::after {
+  width: 100%;
+}
+
+.submit:hover {
+  color: white;
+}
+
+.submit:active {
+  filter: brightness(0.8);
+}

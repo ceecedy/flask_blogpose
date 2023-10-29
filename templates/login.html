@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+    <section class="container-login">
+        <header>Login</header>
+        <form class="forms" action="#">
+            <div class="input-box">
+                <label>Username</label>
+                <input required="" placeholder="Enter username" type="text" name="{{ form.username.name }}">
+            </div>
+            <div class="input-box">
+                <label>Password</label>
+                <input required="" placeholder="Enter password" type="password" name="{{ form.password.name }}">
+            </div>
+            <div class="remember-me">
+                <label class="forgot-password">
+                    <input type="checkbox" name="{{ form.remember.name }}">
+                    Remember me
+                </label>
+            </div>
+            <div class="login-options">
+                <button class="login">Login</button>
+                <p class="forgot-password">Forgot your password?
+                    <a class="password-anchor" href="{{ url_for('forgot_password') }}">Click here!</a>
+                </p>
+                <p class="signup-access">Don't have an Account? <a class="signup-anchor" href="{{ url_for('register') }}">Sign up here!</a></p>
+            </div>
+        </form>
+    </section>
+{% endblock content %}

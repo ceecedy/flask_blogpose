@@ -1,0 +1,66 @@
+{% extends "layout.html"%}
+{% block content %}
+  <section class="container-register">
+    <header>Registration Form</header>
+    <form class="forms" method="POST" action="{{ url_for('register') }}">
+        {{ form.hidden_tag() }}
+        <div class="input-box">
+            <label>Full Name</label>
+            <input required="" placeholder="Enter full name" type="text" name="{{ form.fullname.name }}">
+        </div>
+        <div class="input-box">
+            <label>Username</label>
+            <input required="" placeholder="Enter username" type="text" name="{{ form.username.name }}">
+        </div>
+        <div class="input-box">
+            <label>Email</label>
+            <input required="" placeholder="Enter email" type="email" name="{{ form.email.name }}">
+        </div>
+        <div class="input-box">
+            <label>Password</label>
+            <input required="" placeholder="Enter password" type="password" name="{{ form.password.name }}">
+        </div>
+        <div class="input-box">
+            <label>Confirm Password</label>
+            <input required="" placeholder="Confirm password" type="password" name="{{ form.confirm_password.name }}">
+        </div>
+        <div class="column">
+            <div class="input-box">
+                <label>Phone Number</label>
+                <input required="" placeholder="Enter phone number" type="tel" name="{{ form.phone_number.name }}">
+            </div>
+            <div class="input-box">
+                <label>Birth Date</label>
+                <input required="" placeholder="Enter birth date" type="date" name="{{ form.birth_date.name }}">
+            </div>
+        </div>
+        <div class="gender-box">
+            <label class="gender">Gender</label>
+            <div class="gender-option">
+                {% for choice in form.gender %}
+                    <div class="gender">
+                        <input {% if choice.checked %} checked {% endif %} name="{{ form.gender.name }}" id="check-{{ loop.index }}" type="radio">
+                        <label for="check-{{ loop.index }}">{{ choice.label.text }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="input-box address">
+            <label>Address</label>
+            <input required="" placeholder="Enter street address" type="text" name="{{ form.street_address.name }}">
+            <div class="column">
+                <div class="select-box">
+                    <select name="{{ form.country.name }}">
+                        <option hidden="">Country</option>
+                        {% for country in form.country.choices %}
+                            <option>{{ country }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input required="" placeholder="Enter your city" type="text" name="{{ form.city.name }}">
+            </div>
+        </div>
+        <button class="submit" type="submit">{{ form.submit.label.text }}</button>
+    </form>
+  </section>
+{% endblock content %}
