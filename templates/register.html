@@ -3,7 +3,7 @@
   <section class="container-register">
     <header>Registration Form</header>
     <form class="forms" method="POST" action="{{ url_for('register') }}">
-        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
         <div class="input-box">
             <label>Full Name</label>
             <input required="" placeholder="Enter full name" type="text" name="{{ form.fullname.name }}">
@@ -31,7 +31,7 @@
             </div>
             <div class="input-box">
                 <label>Birth Date</label>
-                <input required="" placeholder="Enter birth date" type="date" name="{{ form.birth_date.name }}">
+                {{ form.birth_date(class="form-control") }}
             </div>
         </div>
         <div class="gender-box">
@@ -39,7 +39,7 @@
             <div class="gender-option">
                 {% for choice in form.gender %}
                     <div class="gender">
-                        <input {% if choice.checked %} checked {% endif %} name="{{ form.gender.name }}" id="check-{{ loop.index }}" type="radio">
+                        <input {% if choice.checked %} checked {% endif %} name="{{ form.gender.name }}" id="check-{{ loop.index }}" type="radio" value="{{ choice.data }}">
                         <label for="check-{{ loop.index }}">{{ choice.label.text }}</label>
                     </div>
                 {% endfor %}
