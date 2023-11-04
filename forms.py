@@ -27,49 +27,80 @@ class Register(FlaskForm):
     
     # accept full name
     # will pass it to variable fullname
-    fullname = StringField('FullName', validators = [DataRequired(message = "This is required, have input on this form."), 
-                                             Length(min = 10, max = 100)])
+    fullname = StringField('Full Name', validators=[
+        DataRequired(message="Full name is required."),
+        Length(min=10, max=100, message="Full name should be between 10 and 100 characters.")
+    ])
+    
     # accept username
     # will pass it to variable username
-    username = StringField('Username', validators = [DataRequired(message = "This is required, have input on this form."), 
-                                                     Length(min = 7, max = 35)]) 
+    username = StringField('Username', validators=[
+        DataRequired(message="Username is required."),
+        Length(min=7, max=35, message="Username should be between 7 and 35 characters.")
+    ])
+    
     # accept email 
     # will pass it to variable email 
-    email = StringField('Email', validators = [DataRequired(message = "This is required, have input on this form."),
-                                               Email()])
+    email = StringField('Email', validators=[
+        DataRequired(message="Email is required."),
+        Email(message="Invalid email format.")
+    ])
+    
     # accept password 
     # will pass it to variable password 
-    password = PasswordField('Password', validators=[DataRequired(message = "Password should be minimum of 10 and maximum of 40."),
-                                                     Length(min = 10, max = 40)])
+    password = PasswordField('Password', validators=[
+        DataRequired(message="Password is required."),
+        Length(min=10, max=40, message="Password should be between 10 and 40 characters.")
+    ])
+     
     # accept confirmation of password 
     # will pass it to variable confirm_password 
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(message = "Confirm your password."),
-                                                     Length(min = 10, max = 40), EqualTo('password')])
+    confirm_password = PasswordField('Confirm Password', validators=[
+        DataRequired(message="Confirm your password."),
+        EqualTo('password', message="Passwords must match.")
+    ])
     # accept phone number 
     # will pass it to the variable phone_number
-    phone_number = StringField('Phone Number', validators = [DataRequired(message = "This is a required field."),
-                                                             Length(min = 11, max = 11, message = "Phone number must be 11 digits and starts with 0."),
-                                                             Regexp("^[0-9]+$", message = "Phone number must consist of numeric digits only.")])
+    phone_number = StringField('Phone Number', validators=[
+        DataRequired(message="Phone number is required."),
+        Regexp("^0[0-9]{10}$", message="Phone number must be 11 digits and starts with 0.")
+    ])
+    
     # accept birth date 
     # will pass it to the variable birth_date 
-    birth_date = DateField('Birth Date', format = "%m/%d%/%Y", 
-                                         validators = [DataRequired(message = 'Birthday is required!')])
+    birth_date = DateField('Birth Date', validators=[DataRequired(message='Birthday is required.')])
+    
     # accept gender 
     # will pass it to the variable gender 
-    gender = RadioField('Gender', choices = [('Male'), ('Female'), ('Prefer not to say')],
-                                    validators = [DataRequired(message = "State your gender...")])
+    gender = RadioField('Gender', choices=[
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('not_say', 'Prefer not to say')
+    ], validators=[DataRequired(message="Please select your gender.")])
+
     # accept street address 
     # will pass it to the variable street_address
-    street_address = StringField('Street Address', validators =[DataRequired(message = "Address is important!"),
-                                                                Length(min = 10, max = 100)])   
+    street_address = StringField('Street Address', validators=[
+        DataRequired(message="Street address is required."),
+        Length(min=10, max=100, message="Address should be between 10 and 100 characters.")
+    ])
+    
     # accept country 
     # will pass it to the variable country 
-    country = SelectField('Country', choices=[('Country'), ('Philippines'), ('UK'), ('USA'), ('Japan')],
-                                        validators=[DataRequired(message = "Pick your country!")])
+    country = SelectField('Country', choices=[
+        ('Philippines'),
+        ('United Kingdom'),
+        ('United States'),
+        ('Japan')
+    ], validators=[DataRequired(message="Please select your country.")])
+    
     # accept city 
     # will pass it to the variable city 
-    city = StringField('City', validators = [DataRequired(message = "State your city!"),
-                                             Length(min = 1, max = 100)])
+    city = StringField('City', validators=[
+        DataRequired(message="City is required."),
+        Length(min=1, max=100, message="City should not exceed 100 characters.")
+    ])
+    
     # accept submit button 
     # will pass it to variable submit 
     submit = SubmitField('Submit')
@@ -91,7 +122,7 @@ class Login(FlaskForm):
     
     # accept login button 
     # will pass it to variable Login 
-    submit = SubmitField('Login')
+    login = SubmitField('Login')
     
 
 class ForgotPassword():
@@ -101,7 +132,7 @@ class ForgotPassword():
     email = StringField('Email', validators = [DataRequired(message = "This is required, have input on this form."),
                                                Email()])
     # accept login button 
-    # will pass it to variable Login 
-    submit = SubmitField('Submit')
+    # will pass it to variable change 
+    change = SubmitField('Submit')
     
 
