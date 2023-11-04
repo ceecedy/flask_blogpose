@@ -56,15 +56,23 @@
           <div class="col-md-8">
             <!-- get_flashed_messages func will get the flashed messages -->
             <!-- categories is set to true to be able to get the second string in the flash function in the register func. -->
-            {% with messages = get_flashed_messages(with_categories = true) %}
-               {% if messages %}
-                  {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                  {% endfor %}
-               {% endif %}
-            {% endwith %}
+            <div class="flash-messages">
+              {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                      {% for category, message in messages %}
+                          {% if category == 'success' %}
+                              <div class="alert alert-success">
+                                  {{ message }}
+                              </div>
+                          {% elif category == 'error' %}
+                              <div class="alert alert-danger">
+                                  {{ message }}
+                              </div>
+                          {% endif %}
+                      {% endfor %}
+                  {% endif %}
+              {% endwith %}
+          </div>
             {% block content %}
             {% endblock content %}
           </div>
