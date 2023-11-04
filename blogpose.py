@@ -38,13 +38,20 @@ def about():
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
     form = Register()
+    print(request.form) # outputting all inputs in the register form to the terminal in list form. 
     if form.validate_on_submit(): # read method if forgotten how it is working. 
+        print("Form is valid")  # Check to ensure this gets printed
         flash(f'Account {form.username.data} has been created!', 'success')
         # the success second string is called category (a parameter), 
         # and it will be passed to the layout design that is named category in jinja2 
         # from the word itself, flash will pop up a notification or a word in your screen that the account was created. 
+        print("Redirecting...")  # Check if this line is executed
         return redirect(url_for('home'))
         # this redirect function will execute if input is validated, it will redirect to homepage. 
+    else:
+        print(form.errors) # to see the errors to this validation. 
+        print("Not validating")
+
     return render_template("register.html", title = "Register", form = form)
 
 @app.route("/login", methods = ['GET', 'POST'])
@@ -62,3 +69,7 @@ def forgot_password():
 
 # A func can have multiple decorators. 
 # You can just let the development server run while you make changes to your code. 
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
