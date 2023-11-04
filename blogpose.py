@@ -57,14 +57,20 @@ def register():
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
     form = Login()
+    if form.validate_on_submit():
+        if form.username.data == "ceeceddy" and form.password.data == "KoreanChallenger":
+            flash("You are now successfully logged in!", "success")
+            print("Login successful. Redirecting to home.") # to see if the form was getting validated
+            return redirect(url_for('home'))
+        else:          
+            flash("Incorrect Username or Password. Try again.", "error")
+        
     return render_template("login.html", title = "Login", form = form)
 
 @app.route("/forgotpassword")
 def forgot_password():
     form = ForgotPassword()
     return render_template("forgot_password.html", title = "Forgot Password", form = form)
-
-
 
 
 # A func can have multiple decorators. 
