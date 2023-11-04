@@ -98,7 +98,7 @@ class Register(FlaskForm):
     # will pass it to the variable city 
     city = StringField('City', validators=[
         DataRequired(message="City is required."),
-        Length(min=1, max=100, message="City should not exceed 100 characters.")
+        Length(min=3, max=100, message="City should not exceed 100 characters.")
     ])
     
     # accept submit button 
