@@ -3,7 +3,7 @@
   <section class="container-register">
     <header>Registration Form</header>
     <form class="forms" method="POST" action="{{ url_for('register') }}">
-        {{ form.csrf_token }}
+        {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
         <div class="input-box">
             <label>Full Name</label>
             {% if form.fullname.errors%}
