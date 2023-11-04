@@ -2,14 +2,33 @@
 {% block content %}
     <section class="container-login">
         <header>Login</header>
-        <form class="forms" action="#">
+        <form class="forms" action="{{ url_for('login') }}" method="POST">
+            {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
             <div class="input-box">
                 <label>Username</label>
-                <input required="" placeholder="Enter username" type="text" name="{{ form.username.name }}">
+                {% if form.username.errors%}
+                    {{ form.username(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.username.errors %}
+                            <span> {{ error}} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <input required="" placeholder="Enter username" type="text" name="{{ form.username.name }}">
+                {% endif %}
             </div>
             <div class="input-box">
                 <label>Password</label>
-                <input required="" placeholder="Enter password" type="password" name="{{ form.password.name }}">
+                {% if form.password.errors %}
+                    {{ form.password(class="form-control form-control-lg is-invalid", placeholder="Confirm Password") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.password.errors %}
+                            <span> {{ error}} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <input required="" placeholder="Enter password" type="password" name="{{ form.password.name }}">
+                {% endif %}
             </div>
             <div class="remember-me">
                 <label class="forgot-password">
@@ -18,7 +37,7 @@
                 </label>
             </div>
             <div class="login-options">
-                <button class="login">Login</button>
+                <button class="login" type="submit">{{ form.login.label.text }}</button>
                 <p class="forgot-password">Forgot your password?
                     <a class="password-anchor" href="{{ url_for('forgot_password') }}">Click here!</a>
                 </p>
