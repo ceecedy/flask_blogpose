@@ -1,0 +1,165 @@
+.container-login {
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    border-color: #a28089;
+    border-style: solid;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 0 auto;
+    text-align: center; /* Center the content horizontally */
+  }
+  
+  .container-login header {
+    font-size: 1.2rem;
+    color: #a28089;
+    font-weight: 600;
+    text-align: center; 
+    margin-bottom: 10px; /* Add margin below the header */
+  }
+  
+  .container-login .forms {
+    margin-top: 15px;
+    text-align: left; /* Align form content to the left */
+  }
+  
+  .forms .input-box {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .input-box label {
+    color: #a28089;
+    text-align: left; /* Align labels to the left */
+  }
+  
+  .forms :where(.input-box input, .select-box) {
+    position: relative;
+    height: 35px;
+    width: 100%;
+    outline: none;
+    font-size: 1rem;
+    color: #a28089;
+    margin-top: 5px;
+    border: 1px solid #EE4E34;
+    border-radius: 6px;
+    padding: 0 15px;
+    background: #ffffff;
+  }
+  
+  .input-box input:focus {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column; /* Stack elements vertically */
+  }
+
+  .remember-me {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column; /* Stack elements vertically */
+      margin-top: 22px;
+  }
+  
+  .login {
+    height: 40px;
+    width: 70%; /* Adjust the width as needed */
+    --color: #a28089;
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-top: 15px;
+    margin-bottom: 20px; /* Add margin below the login button */
+    border: 1px solid;
+    border-color: #EE4E34;
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--color);
+    z-index: 1;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+  }
+  
+  .login .centered-text {
+    display: inline-block;
+  }
+  
+  .login:before,
+  .login::after {
+    content: '';
+    display: block;
+    position: absolute;
+    border-radius: 6px;
+    z-index: -1;
+    background-color: var(--color);
+    transition: all 0.1s ease;
+  }
+  
+  .login:before {
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+  }
+  
+  .login::after {
+    right: 0;
+    bottom: 0;
+    width: 0;
+    height: 100%;
+  }
+  
+  .login:hover::before,
+  .login:hover::after {
+    width: 100%;
+  }
+  
+  .login:hover {
+    color: white;
+  }
+  
+  .login:active {
+    filter: brightness(0.8);
+  }
+  
+  .forgot-password, .signup-access, .password-anchor {
+    font-size: 1rem;
+    color: #a28089;
+    cursor: pointer;
+    text-align: center; 
+  }
+  
+  .signup-anchor {
+    color: #a28089;
+  }
+
+  .input-box.remember-me {
+    margin-top: 10px; /* Space between password and remember me */
+    text-align: center; /* Align content in the center */
+  }
+
+  .input-box.remember-me .remember-label {
+      color: #a28089;
+      display: flex;
+      align-items: center; /* Center items vertically */
+      justify-content: center; /* Center items horizontally */
+  }
+
+  .input-box.remember-me input {
+      margin-right: 5px; /* Add some spacing between checkbox and text */
+      color: #a28089;
+  }
+
+
