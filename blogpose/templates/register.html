@@ -1,0 +1,160 @@
+{% extends "layout.html"%}
+{% block content %}
+  <section class="container-register">
+    <header>Registration Form</header>
+    <form class="forms" method="POST" action="{{ url_for('register') }}">
+        {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
+        <div class="input-box">
+            <label>Full Name</label>
+            {% if form.fullname.errors%}
+                {{ form.fullname(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.fullname.errors %}
+                        <span> {{ error}} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <input required="" placeholder="Enter full name" type="text" name="{{ form.fullname.name }}">
+            {% endif %}
+        </div>
+        <div class="input-box">
+            <label>Username</label>
+            {% if form.username.errors%}
+                {{ form.username(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                        <span> {{ error}} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <input required="" placeholder="Enter username" type="text" name="{{ form.username.name }}">
+            {% endif %}
+        </div>
+        <div class="input-box">
+            <label>Email</label>
+            {% if form.email.errors%}
+                {{ form.email(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                        <span> {{ error}} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <input required="" placeholder="Enter email" type="email" name="{{ form.email.name }}">
+            {% endif %}
+        </div>
+        <div class="input-box">
+            <label>Password</label>
+            {% if form.password.errors %}
+                {{ form.password(class="form-control form-control-lg is-invalid", placeholder="Confirm Password") }}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                        <span> {{ error}} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <input required="" placeholder="Enter password" type="password" name="{{ form.password.name }}">
+            {% endif %}
+        </div>
+        <div class="input-box">
+            <label>Confirm Password</label>
+            {% if form.confirm_password.errors %}
+                {{ form.confirm_password(class="form-control form-control-lg is-invalid", placeholder="Confirm Password") }}
+                <div class="invalid-feedback">
+                    {% for error in form.confirm_password.errors %}
+                        <span> {{ error}} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <input required="" placeholder="Confirm password" type="password" name="{{ form.confirm_password.name }}">
+            {% endif %}
+        </div>
+        <div class="column">
+            <div class="input-box">
+                <label>Phone Number</label>
+                {% if form.phone_number.errors %}
+                {{ form.phone_number(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.phone_number.errors %}
+                        <span> {{ error}} </span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    <input required="" placeholder="Enter phone number" type="tel" name="{{ form.phone_number.name }}">
+                {% endif %}
+            </div>
+            <div class="input-box">
+                <label>Birth Date</label>
+                {% if form.birth_date.errors %}
+                {{ form.birth_date(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.birth_date.errors %}
+                        <span> {{ error}} </span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.birth_date(class="form-control") }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="gender-box">
+            <label class="gender">Gender</label>
+            <div class="gender-option">
+                {% if form.gender.errors %}
+                {{ form.gender(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.gender.errors %}
+                            <span> {{ error}} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {% for choice in form.gender %}
+                        <div class="gender">
+                            <input {% if choice.checked %} checked {% endif %} name="{{ form.gender.name }}" id="check-{{ loop.index }}" type="radio" value="{{ choice.data }}">
+                            <label for="check-{{ loop.index }}">{{ choice.label.text }}</label>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="input-box address">
+            <label>Address</label>
+            {% if form.street_address.errors %}
+                {{ form.street_address(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.street_address.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <input required="" placeholder="Enter street address" type="text" name="{{ form.street_address.name }}">
+            {% endif %}
+            <div class="input-box">
+                {% if form.country.errors %}
+                    {{ form.country(class="form-control form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.country.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.country(class="form-control form-control") }}
+                {% endif %}
+            </div>
+            <div class="input-box">
+                {% if form.city.errors %}
+                    {{ form.city(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.city.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <input required="" placeholder="Enter your city" type="text" name="{{ form.city.name }}">
+                {% endif %}
+            </div>
+        </div>
+        <button class="submit" type="submit">{{ form.submit.label.text }}</button>
+    </form>
+  </section>
+{% endblock content %}
