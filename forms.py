@@ -115,7 +115,7 @@ class Login(FlaskForm):
     # accept password 
     # will pass it to variable password 
     password = PasswordField('Password', validators=[DataRequired(message = "Password should be minimum of 10 and maximum of 16."),
-                                                     Length(min = 10, max = 16)]) 
+                                                     Length(min = 10, max = 40)]) 
     # accept boolean to let the user have choice to stay login 
     # will pass it to the variable remember 
     remember = BooleanField('Remember me')
