@@ -1,9 +1,7 @@
 from flask import Flask
 
-
 # check the description of the sql alchemy for informations. 
 from flask_sqlalchemy import SQLAlchemy
-
 
 app = Flask(__name__)
 # When using this two class that is made to be a form, we need to make a secret key. 
@@ -18,5 +16,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db"
 # It is important to create a database instance. That's the use of SQL Alchemy. 
 db = SQLAlchemy(app)
 
+# importing routes at this point to load up the routes at the init. 
 from blogpose import routes
 
