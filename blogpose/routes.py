@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request
 
 # Importing the forms.py to use the register class and login class. 
 # They will be used to pass them in render_template via a variable. 
