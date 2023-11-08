@@ -2,7 +2,7 @@
 {% block content %}
     <section class="container-login">
         <header>Login</header>
-        <form class="forms" action="{{ url_for('login') }}" method="POST">
+        <form class="forms" action="" method="POST">
             {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
             <div class="input-box">
                 <label>Username</label>
