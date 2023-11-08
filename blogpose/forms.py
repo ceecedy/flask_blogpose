@@ -8,7 +8,8 @@ from flask_wtf import FlaskForm
 # SubmitField class from wtforms is used to create a button specialized in submitting data. 
 # DateField class was used to take the dates input. It is from wtforms module.
 # RadioField class is used for taking radio button inputs. From wtforms module. 
-from wtforms import StringField, PasswordField, SubmitField, DateField, RadioField, Form, SelectField, BooleanField
+# ValidationError class is used to validate every inputs of the user in the form.
+from wtforms import StringField, PasswordField, SubmitField, DateField, RadioField, Form, SelectField, BooleanField, ValidationError
 
 # importing a class that will make sure that the input should not be empty. 
 # the name of the class is "DataRequired" from module wtforms.validators. 
@@ -16,6 +17,9 @@ from wtforms import StringField, PasswordField, SubmitField, DateField, RadioFie
 # EqualTo clas is used to compare the current object to another. 
 # Regexp or Regular Expression class is used to ensure that the input is a number. It is from validator module. 
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
+
+# Importing User model to for validations in registration. 
+from blogpose.models import User
 
 
 class Register(FlaskForm):
@@ -105,6 +109,25 @@ class Register(FlaskForm):
     # will pass it to variable submit 
     submit = SubmitField('Submit')
 
+    # function to validate username field. 
+    def validate_username(self, username):
+        # getting the query of a given username if exists and pass it to variable user 
+        # the first method will be use to securely return the first result to filter. 
+        user = User.query.filter_by(username = username.data).first()
+        
+        # if user does not found, it will have value "None"
+        if user:    
+            raise ValidationError(f"The username {username.data} already exists. Try another")
+    
+    # function to validate email field. 
+    def validate_email(self, email):
+        # getting the query of a given email if exists and pass it to variable user 
+        # the first method will be use to securely return the first result to filter. 
+        user = User.query.filter_by(email = email.data).first()
+        
+        # if user does not found, it will have value "None"
+        if user:    
+            raise ValidationError(f"The username {email.data} already exists. Try another")
 
 class Login(FlaskForm):
     
@@ -124,8 +147,12 @@ class Login(FlaskForm):
     # will pass it to variable Login 
     login = SubmitField('Login')
     
+    
+class Account(FlaskForm):
+    pass 
 
-class ForgotPassword():
+
+class ForgotPassword(FlaskForm):
     
     # accepting email for password change. 
     # will pass it to variable email
