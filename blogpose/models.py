@@ -1,12 +1,25 @@
-from blogpose import db
-
 # importing datetime class 
 from datetime import datetime
+
+from blogpose import db, login_manager 
+
+# this is used for the status feedback of the logged in user. 
+# for more informations, read the UserMixin.
+from flask_login import UserMixin
+
+# func with decorator. Called user_loader.  
+# this is for reloading the user from the user id stored in the session. 
+# read the descriptions in the decorator for more informations.
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Using sql alchemy, we can represent the database structure as classes. 
 # That classes is called models. 
 # This class named User is inheriting the db.Model. This is important to do when making a model. 
-class User(db.Model):
+# extending also the UserMixin class in the class User. 
+# This is essential because the extension load user has to know how to find the user by id. 
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True) # setting this id to be a primary key. It automatically generates. 
     username = db.Column(db.String(35), unique = True, nullable = False) # setting this username to become unique and not null. 
     email = db.Column(db.String(120), unique = True, nullable = False) # setting this email to become unique and not null. 
