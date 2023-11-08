@@ -30,7 +30,10 @@ bcrypt = Bcrypt(app)
 # using LoginManager will ease up the development of login system of this project. 
 login_manager = LoginManager(app)
 # declare initially the login view of the app. 
+# this will be get by the routes.py if needed to login first. 
 login_manager.login_view = "login"
+# along with login_view, this is a flash message above the login_view. 
+# This will be get also by the routes.py if needed to login first. 
 # declare initially this line below, if the user had access the account form while not logged in. 
 login_manager.login_message_category = "info"
 
