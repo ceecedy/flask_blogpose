@@ -31,7 +31,7 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 # declare initially the login view of the app. 
 login_manager.login_view = "login"
-# declare initially this line below, if the user had access the account while not logged in. 
+# declare initially this line below, if the user had access the account form while not logged in. 
 login_manager.login_message_category = "info"
 
 # importing routes at this point to load up the routes at the init. 
