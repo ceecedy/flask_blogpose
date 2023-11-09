@@ -2,157 +2,193 @@
 {% block content %}
     <!-- This is jinja2, templating engine that flask uses. -->
     <div class="content-section">
-        <div class="media">
-            <img class="rounded-circle account-img" src="{{ img_file }}">
-            <div class="media-body">
-                <h2 class="account-heading">{{ current_user.fullname }}</h2>
-                <p class="text-secondary">Username: <br>
-                    <span class = "highlight-color-and-text">{{ current_user.username }}</span>
-                </p>
-                <p class="text-secondary">Email: <br>
-                    <span class = "highlight-color-and-text">{{ current_user.email }}</span>
-                </p>
-            </div>            
-        </div>
-        <hr class="email-line"> <!-- Horizontal line for separation -->
-        <!-- FORM HERE -->
-        <section class="container-update">
-            <header class="update-header">Update Account Information</header>
-            <form class="forms" method="POST" action="{{ url_for('account') }}">
-                {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
-                <div class="input-box">
-                    <label>Full Name</label>
-                    {% if form.fullname.errors%}
-                        {{ form.fullname(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.fullname.errors %}
-                                <span> {{ error}} </span>
+        <form class="forms" method="POST" action="" enctype="multipart/form-data">
+            {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
+            <div class="media">
+                <img class="rounded-circle account-img clickable" src="{{ img_file }}" id="profileImage">
+                <!-- Modal HTML -->
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
+                        <span class="close">&times;</span>
+                        <header class="update-header">Change Profile Picture</header>
+                        {{ form.picture(class="form-control-file") }}
+                        {% if form.picture.errors %}
+                            {% for error in form.picture.errors%}
+                                <span class="text-danger">{{ error }}</span>
                             {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.fullname(class="form-control") }}
-                    {% endif %}
+                        {% endif%}
+                    </div>
                 </div>
-                <div class="input-box">
-                    <label>Username</label>
-                    {% if form.username.errors%}
-                        {{ form.username(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.username.errors %}
-                                <span> {{ error}} </span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.username(class="form-control") }}
-                    {% endif %}
-                </div>
-                <div class="input-box">
-                    <label>Email</label>
-                    {% if form.email.errors%}
-                        {{ form.email(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                <span> {{ error}} </span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.email(class="form-control") }}
-                    {% endif %}
-                </div>
-                <div class="column">
+                <div class="media-body">
+                    <h2 class="account-heading">{{ current_user.fullname }}</h2>
+                    <p class="text-secondary">Username: <br>
+                        <span class = "highlight-color-and-text">{{ current_user.username }}</span>
+                    </p>
+                    <p class="text-secondary">Email: <br>
+                        <span class = "highlight-color-and-text">{{ current_user.email }}</span>
+                    </p>
+                </div>            
+            </div>
+            <hr class="email-line"> <!-- Horizontal line for separation -->
+            <!-- DATA BODY-->
+            <section class="container-update">
+                <header class="update-header">Update Account Information</header>
                     <div class="input-box">
-                        <label>Phone Number</label>
-                        {% if form.phone_number.errors %}
-                        {{ form.phone_number(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.phone_number.errors %}
-                                <span> {{ error}} </span>
-                            {% endfor %}
-                        </div>
+                        <label>Full Name</label>
+                        {% if form.fullname.errors%}
+                            {{ form.fullname(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.fullname.errors %}
+                                    <span> {{ error}} </span>
+                                {% endfor %}
+                            </div>
                         {% else %}
-                            {{ form.phone_number(class="form-control") }}
+                            {{ form.fullname(class="form-control") }}
                         {% endif %}
                     </div>
                     <div class="input-box">
-                        <label>Birth Date</label>
-                        {% if form.birth_date.errors %}
-                        {{ form.birth_date(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.birth_date.errors %}
-                                <span> {{ error}} </span>
-                            {% endfor %}
-                        </div>
+                        <label>Username</label>
+                        {% if form.username.errors%}
+                            {{ form.username(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    <span> {{ error}} </span>
+                                {% endfor %}
+                            </div>
                         {% else %}
-                            {{ form.birth_date() }}
+                            {{ form.username(class="form-control") }}
                         {% endif %}
                     </div>
-                </div>
-                <div class="column">
-                    <div class="input-box input-card">
-                        <label>Current Gender</label>
-                        <p class="current-data">{{ current_user.gender }}</p>
+                    <div class="input-box">
+                        <label>Email</label>
+                        {% if form.email.errors%}
+                            {{ form.email(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span> {{ error}} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control") }}
+                        {% endif %}
                     </div>
-                    <!-- Input field for entering new gender -->
-                    <div class="input-box input-card">
-                        <label for="new_gender">Enter New Gender</label>
-                        <div class="gender-option horizontal-gender">
-                            {% if form.gender.errors %}
-                                {{ form.gender(class="form-control form-control-lg is-invalid") }}
+                    <div class="column">
+                        <div class="input-box">
+                            <label>Phone Number</label>
+                            {% if form.phone_number.errors %}
+                            {{ form.phone_number(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.phone_number.errors %}
+                                    <span> {{ error}} </span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                                {{ form.phone_number(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="input-box">
+                            <label>Birth Date</label>
+                            {% if form.birth_date.errors %}
+                            {{ form.birth_date(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.birth_date.errors %}
+                                    <span> {{ error}} </span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                                {{ form.birth_date() }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="input-box input-card">
+                            <label>Current Gender</label>
+                            <p class="current-data">{{ current_user.gender }}</p>
+                        </div>
+                        <!-- Input field for entering new gender -->
+                        <div class="input-box input-card">
+                            <label for="new_gender">Enter New Gender</label>
+                            <div class="gender-option horizontal-gender">
+                                {% if form.gender.errors %}
+                                    {{ form.gender(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.gender.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {% for choice in form.gender %}
+                                        <div class="gender">
+                                            <input {% if choice.checked %} checked {% endif %} name="{{ form.gender.name }}" id="check-{{ loop.index }}" type="radio" value="{{ choice.data }}">
+                                            <label for="check-{{ loop.index }}">{{ choice.label.text }}</label>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>          
+                    <div class="input-box address">
+                        <label>Address</label>
+                        {% if form.street_address.errors %}
+                            {{ form.street_address(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.street_address.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.street_address(class="form-control") }}
+                        {% endif %}
+                        <div class="input-box">
+                            {% if form.country.errors %}
+                                {{ form.country(class="form-control form-control is-invalid") }}
                                 <div class="invalid-feedback">
-                                    {% for error in form.gender.errors %}
+                                    {% for error in form.country.errors %}
                                         <span>{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {% for choice in form.gender %}
-                                    <div class="gender">
-                                        <input {% if choice.checked %} checked {% endif %} name="{{ form.gender.name }}" id="check-{{ loop.index }}" type="radio" value="{{ choice.data }}">
-                                        <label for="check-{{ loop.index }}">{{ choice.label.text }}</label>
-                                    </div>
-                                {% endfor %}
+                                {{ form.country(class="form-control") }}
                             {% endif %}
                         </div>
-                    </div>
-                </div>          
-                <div class="input-box address">
-                    <label>Address</label>
-                    {% if form.street_address.errors %}
-                        {{ form.street_address(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.street_address.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+                        <div class="input-box">
+                            {% if form.city.errors %}
+                                {{ form.city(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.city.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.city(class="form-control") }}
+                            {% endif %}
                         </div>
-                    {% else %}
-                        {{ form.street_address(class="form-control") }}
-                    {% endif %}
-                    <div class="input-box">
-                        {% if form.country.errors %}
-                            {{ form.country(class="form-control form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.country.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.country(class="form-control") }}
-                        {% endif %}
-                    </div>
-                    <div class="input-box">
-                        {% if form.city.errors %}
-                            {{ form.city(class="form-control form-control-lg is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.city.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.city(class="form-control") }}
-                        {% endif %}
-                    </div>
-                </div>   
-            <button class="submit" type="submit">{{ form.submit.label.text }}</button>
+                    </div>   
+                    <button class="submit" type="submit">{{ form.submit.label.text }}</button>
+            </section>
         </form>
-    </section>
-</div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const profileImage = document.getElementById("profileImage");
+            const modal = document.getElementById("myModal");
+            const spanClose = document.querySelector(".close");
+        
+            profileImage.addEventListener("click", function() {
+                modal.style.display = "block"; // Display the modal when the image is clicked
+            });
+        
+            spanClose.addEventListener("click", function() {
+                modal.style.display = "none"; // Close the modal when the 'X' (close button) is clicked
+            });
+        
+            window.addEventListener("click", function(event) {
+                if (event.target === modal) {
+                    modal.style.display = "none"; // Close the modal when clicking outside the modal content
+                }
+            });
+        });        
+    </script>
 {% endblock content %} <!-- explicitly mentioning what block is ending. -->
