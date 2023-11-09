@@ -21,12 +21,19 @@ def load_user(user_id):
 # This is essential because the extension load user has to know how to find the user by id. 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True) # setting this id to be a primary key. It automatically generates. 
+    fullname = db.Column(db.String(150), nullable=False) # setting this fullname to become not null 
     username = db.Column(db.String(35), unique = True, nullable = False) # setting this username to become unique and not null. 
     email = db.Column(db.String(120), unique = True, nullable = False) # setting this email to become unique and not null. 
     # setting this email to become unique and not null.
     # this will accept string. It is possible because the image willbe hashed. 
     # users can have similar profiles, so it is not unique. 
     # if user does not set his/her own profile, there would be a default photo for them. 
+    phone_number = db.Column(db.String(11), nullable=False) # setting this phone_number to become not null
+    birth_date = db.Column(db.Date, nullable=False) # setting this birth_date to become not null
+    gender = db.Column(db.String(10), nullable=False) # setting this gender to become not null
+    street_address = db.Column(db.String(100), nullable=False) # setting this street_address to become not null
+    country = db.Column(db.String(50), nullable=False) # setting this country to become not null
+    city = db.Column(db.String(100), nullable=False) # setting this city to become not null
     img_file = db.Column(db.String(20), nullable = False, default = "default.jpg")
     # This password will have to accept 60 characters in a hashed way. 
     # Password can be not unique also for the reason of some users may have similar passwords. 
