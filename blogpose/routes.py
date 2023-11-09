@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request
 
 # Importing the forms.py to use the register class and login class. 
 # They will be used to pass them in render_template via a variable. 
-from blogpose.forms import Register, Login, ForgotPassword, UdpateAccount
+from blogpose.forms import Register, Login, ForgotPassword, UpdateAccount
 
 # import the classes from models.py 
 from blogpose.models import User, Post
@@ -21,6 +21,13 @@ from blogpose import app, bcrypt, db
 # for logout function, just see the implementation for more details
 # for login required function, just see the implementation for more details
 from flask_login import login_user, current_user, logout_user, login_required
+
+# importing secrets to process the profile picture to get secured. 
+# importing os also for the process on where to put picture. 
+import secrets, os
+
+# importing image resizer module name pillow 
+from PIL import Image
 
 # creating dummy data 
 posts = [
@@ -135,13 +142,56 @@ def forgot_password():
     form = ForgotPassword()
     return render_template("forgot_password.html", title = "Forgot Password", form = form)
 
-@app.route("/account")
+# function to process the uploads of user to their profile pictures. 
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+    # maximum size of profile picture
+    output_size = (125, 125)
+    # opening the image and pass it to an instance of Image 
+    i = Image.open(form_picture)
+    # creating thumbnail for the uploaded picture. 
+    i.thumbnail(output_size)
+    # saving the thumbnail 
+    i.save(picture_path) 
+    
+    # thumbnails are helpful in the web for better performance. 
+    # if we put the original picture in the web, it might affect the performance as the user grows. 
+    
+    return picture_fn
+
+@app.route("/account", methods = ['GET', 'POST'])
 @login_required
 def account():
-    form = UdpateAccount()
+    form = UpdateAccount()
     if form.validate_on_submit():
-        pass
-    
+        # handling if the user changes his/her profile 
+        if form.picture.data:
+            print("I have the data")
+            picture_file = save_picture(form.picture.data)
+            current_user.img_file = picture_file
+            
+        current_user.fullname = form.fullname.data
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        current_user.phone_number = form.phone_number.data
+        current_user.birth_date = form.birth_date.data
+        current_user.gender = form.gender.data
+        current_user.street_address = form.street_address.data
+        current_user.country = form.country.data
+        current_user.city = form.city.data
+        
+        # changing the data in the database 
+        db.session.commit()
+        
+        #notify in the terminal that changes has succeed. 
+        print("Changes succeeed.") 
+        # flash the user that the changes succeed 
+        flash(f"Data changes succeed for account {current_user.username}", "success")
+        return redirect(url_for('account'))
+        
     elif request.method == "GET":
         # if the request method is get, which by default at first is get
         # it will fetch all the current user data and display it to the field. 
