@@ -2,6 +2,12 @@
 from flask_wtf import FlaskForm
 # FlaskForm is a class from the module flask_wtf. So if we create forms, we need to make a class that extends FlaskForm. 
 
+# This import is for uploading a files that will be used in the app. 
+# the FileField is a class that creates an object for the input of images. 
+# the FileAllowed is a class that responsible for filtering the allowed files for the input of the user. 
+# FileAllowed class can be seen as validator. 
+from flask_wtf.file import FileField, FileAllowed
+
 # Inside the forms class we need a fields that will be an object.
 # We will use StringField class from module wtforms to create a String object to accept a string input. 
 # PasswordField class from wtforms is also imported to create an object to accept effective password. 
@@ -151,8 +157,8 @@ class Login(FlaskForm):
     # will pass it to variable Login 
     login = SubmitField('Login')
     
-    
-class UdpateAccount(FlaskForm):
+        
+class UpdateAccount(FlaskForm):
     
     # accept full name
     # will pass it to variable fullname
@@ -216,6 +222,10 @@ class UdpateAccount(FlaskForm):
         DataRequired(message="City is required."),
         Length(min=3, max=100, message="City should not exceed 100 characters.")
     ])
+    
+    # accept profile picture 
+    # will pass it to the variable picture
+    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     
     # accept submit button 
     # will pass it to variable submit 
