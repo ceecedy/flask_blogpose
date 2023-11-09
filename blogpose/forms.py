@@ -21,6 +21,10 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
 # Importing User model to for validations in registration. 
 from blogpose.models import User
 
+# Importing flask_login.utils.current_user for the usage of UpdateAccount form. 
+# This is to validate the current user changes in data. 
+from flask_login import current_user
+
 
 class Register(FlaskForm):
     # Validators parameter are used in the StringField to have restrictions for input of the users. 
@@ -148,8 +152,99 @@ class Login(FlaskForm):
     login = SubmitField('Login')
     
     
-class Account(FlaskForm):
-    pass 
+class UdpateAccount(FlaskForm):
+    
+    # accept full name
+    # will pass it to variable fullname
+    fullname = StringField('Full Name', validators=[
+        DataRequired(message="Full name is required."),
+        Length(min=10, max=100, message="Full name should be between 10 and 100 characters.")
+    ])
+    
+    # accept username
+    # will pass it to variable username
+    username = StringField('Username', validators=[
+        DataRequired(message="Username is required."),
+        Length(min=7, max=35, message="Username should be between 7 and 35 characters.")
+    ])
+    
+    # accept email 
+    # will pass it to variable email 
+    email = StringField('Email', validators=[
+        DataRequired(message="Email is required."),
+        Email(message="Invalid email format.")
+    ])
+    
+    # accept phone number 
+    # will pass it to the variable phone_number
+    phone_number = StringField('Phone Number', validators=[
+        DataRequired(message="Phone number is required."),
+        Regexp("^0[0-9]{10}$", message="Phone number must be 11 digits and starts with 0.")
+    ])
+    
+    # accept birth date 
+    # will pass it to the variable birth_date 
+    birth_date = DateField('Birth Date', validators=[DataRequired(message='Birthday is required.')])
+    
+    # accept gender 
+    # will pass it to the variable gender 
+    gender = RadioField('Gender', choices=[
+        ('Male'),
+        ('Female'),
+        ('Prefer not to say')
+    ], validators=[DataRequired(message="Please select your gender.")])
+
+    # accept street address 
+    # will pass it to the variable street_address
+    street_address = StringField('Street Address', validators=[
+        DataRequired(message="Street address is required."),
+        Length(min=10, max=100, message="Address should be between 10 and 100 characters.")
+    ])
+    
+    # accept country 
+    # will pass it to the variable country 
+    country = SelectField('Country', choices=[
+        ('Philippines'),
+        ('United Kingdom'),
+        ('United States'),
+        ('Japan')
+    ], validators=[DataRequired(message="Please select your country.")])
+    
+    # accept city 
+    # will pass it to the variable city 
+    city = StringField('City', validators=[
+        DataRequired(message="City is required."),
+        Length(min=3, max=100, message="City should not exceed 100 characters.")
+    ])
+    
+    # accept submit button 
+    # will pass it to variable submit 
+    submit = SubmitField('Update')
+
+    # function to validate username field. 
+    def validate_username(self, username):
+        # checking first if a user's username is not equal to the current username.  
+        if username.data != current_user.username:
+            # getting the query of a given username if exists and pass it to variable user 
+            # the first method will be use to securely return the first result to filter. 
+            user = User.query.filter_by(username = username.data).first()
+            
+            # if user does not found, it will have value "None"
+            if user:    
+                raise ValidationError(f"The username {username.data} already exists. Try another")    
+
+    
+    # function to validate email field. 
+    def validate_email(self, email):
+        # checking first if a user's email is not equal to the current email.  
+        if email.data != current_user.email:
+            # getting the query of a given email if exists and pass it to variable user 
+            # the first method will be use to securely return the first result to filter. 
+            user = User.query.filter_by(email = email.data).first()
+            
+            # if user does not found, it will have value "None"
+            if user:    
+                raise ValidationError(f"The username {email.data} already exists. Try another")
 
 
 class ForgotPassword(FlaskForm):
