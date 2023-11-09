@@ -55,3 +55,80 @@
     margin-bottom: 5px; /* Adjust margin for spacing */
     margin-top: 20px;
 }
+
+/* Modal CSS */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ transparency */
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* Center it */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%; /* Could be more responsive */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.no-top-margin {
+    margin-top: 0px;
+}
+
+.profile-picture-instruction {
+    color: #a28089;
+}
+
+.form-control-file {
+    margin-bottom: 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.upload-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.custom-upload-button {
+    padding: 12px 20px;
+    background-color: #a28089;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Adjust these styles as needed for the button */
+.custom-upload-button:hover {
+    background-color: #2980b9;
+}
