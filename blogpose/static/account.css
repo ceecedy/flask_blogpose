@@ -1,0 +1,57 @@
+.email-line {
+    border: 0.5px solid #ccc; /* Example border style */
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.current-data {
+    color: #a28089;
+    width: 100%; 
+    margin-top: 15.5px;
+    outline: none;
+    font-size: 1rem;
+    color: #a28089;
+    border: 1px solid #EE4E34;
+    border-radius: 6px;
+    padding: 5px 5px 5px 15px;
+    background: #ffffff;
+}
+
+.highlight-color-and-text {
+    color: #a28089;
+    margin-left: 30px;
+}
+
+.update-header {
+    font-size: 1.2rem;
+    color: #a28089; /* Text color changed to #a28089 */
+    font-weight: 600;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Apply to the container to display gender horizontally */
+.horizontal-gender {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+/* Adjust the font size */
+.horizontal-gender label {
+    font-size: 0.8rem; /* Adjust the value as needed */
+}
+
+.form-control {
+    display: inline-block;
+    color: #a28089;
+}
+
+/* Add border to the "Enter New Gender" section */
+.input-box.input-card {
+    border: 1.5px solid #a28089; /* Add border style */
+    border-radius: 5px; /* Add border radius for a rounded look */
+    padding: 10px; /* Adjust padding as needed */
+    margin-bottom: 5px; /* Adjust margin for spacing */
+    margin-top: 20px;
+}
