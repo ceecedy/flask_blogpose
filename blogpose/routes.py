@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request
 
 # Importing the forms.py to use the register class and login class. 
 # They will be used to pass them in render_template via a variable. 
-from blogpose.forms import Register, Login, ForgotPassword, Account
+from blogpose.forms import Register, Login, ForgotPassword, UdpateAccount
 
 # import the classes from models.py 
 from blogpose.models import User, Post
@@ -61,8 +61,19 @@ def register():
         # will now  create hashed password first. 
         # it is decoded to utf-8 to output to string, not bytes. 
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        # after creating hased password, we will not creating the user and insert it to the database. 
-        user = User(username = form.username.data, email = form.email.data, password = hashed_password)
+        # after creating hased password, we will now creating the user and insert it to the database. 
+        user = User(
+            fullname=form.fullname.data,
+            username=form.username.data,
+            email=form.email.data,
+            phone_number=form.phone_number.data,
+            birth_date=form.birth_date.data,
+            gender=form.gender.data,
+            street_address=form.street_address.data,
+            country=form.country.data,
+            city=form.city.data,
+            password=hashed_password
+        )
         # add the user instance to the database
         db.session.add(user)
         # commit the addition of user in the database 
@@ -73,7 +84,7 @@ def register():
         # and it will be passed to the layout design that is named category in jinja2 
         # from the word itself, flash will pop up a notification or a word in your screen that the account was created. 
         print("Redirecting...")  # Check if this line is executed
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
         # this redirect function will execute if input is validated, it will redirect to homepage. 
     else:
         print(form.errors) # to see the errors to this validation. 
@@ -127,8 +138,26 @@ def forgot_password():
 @app.route("/account")
 @login_required
 def account():
-    form = Account()
-    return render_template("account.html", title = "Account Settings")
+    form = UdpateAccount()
+    if form.validate_on_submit():
+        pass
+    
+    elif request.method == "GET":
+        # if the request method is get, which by default at first is get
+        # it will fetch all the current user data and display it to the field. 
+        form.fullname.data = current_user.fullname 
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+        form.phone_number.data = current_user.phone_number
+        form.birth_date.data = current_user.birth_date
+        form.gender.data = current_user.gender
+        form.street_address.data = current_user.street_address
+        form.country.data = current_user.country
+        form.city.data = current_user.city
+    
+    profile_image = url_for('static', filename = 'profile_pics/' + current_user.img_file)
+    # the img_file argument is for the database to pass the value of the profile picture to UI layout. 
+    return render_template("account.html", title = "Account Settings", form = form, img_file = profile_image)
 
 
 # A func can have multiple decorators. 
