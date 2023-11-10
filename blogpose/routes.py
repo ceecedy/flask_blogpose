@@ -1,8 +1,8 @@
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 
 # Importing the forms.py to use the register class and login class. 
 # They will be used to pass them in render_template via a variable. 
-from blogpose.forms import Register, Login, ForgotPassword, UpdateAccount
+from blogpose.forms import Register, Login, ForgotPassword, UpdateAccount, NewPost
 
 # import the classes from models.py 
 from blogpose.models import User, Post
@@ -29,27 +29,19 @@ import secrets, os
 # importing image resizer module name pillow 
 from PIL import Image
 
-# creating dummy data 
-posts = [
-    {
-        "author": "Ryan Lester Zamudio",
-        "title": "I'm Using BlogPose!",
-        "content": "First Post Content",
-        "date_posted": "October 26, 2023"
-    },
-    {
-        "author": "Amado Jeremiah Galzote",
-        "title": "I'm Using BlogPose TOO!",
-        "content": "Second Post Content",
-        "date_posted": "October 27, 2023"
-    }
-]
 
 # This app route is a route api. This is basically the home route. 
 @app.route("/") 
 @app.route("/home")
 def home():
-    return render_template("home.html", posts = posts)
+    return render_template("home.html")
+
+@app.route("/feeds")
+@login_required
+def feeds():
+    # getting all the post in the database and set it to one variable 
+    posts = Post.query.all()
+    return render_template("feeds.html", title = "Feeds", posts = posts)
 
 @app.route("/about")
 def about():
@@ -104,7 +96,7 @@ def login():
     # this if statement will check if there's a existing user logged in, in the system 
     # and saw the login button and attempting to click it. 
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('feeds'))
     form = Login()
     if form.validate_on_submit():
         # Logging in the user
@@ -126,7 +118,7 @@ def login():
             else:
                 flash("You are now successfully logged in!", "success")
                 print("Login successful. Redirecting to home.") # to see if the form was getting validated
-                return redirect(url_for('home'))
+                return redirect(url_for('feeds'))
         else:
             flash("Incorrect Username or Password. Try again.", "error")
         
@@ -208,6 +200,74 @@ def account():
     profile_image = url_for('static', filename = 'profile_pics/' + current_user.img_file)
     # the img_file argument is for the database to pass the value of the profile picture to UI layout. 
     return render_template("account.html", title = "Account Settings", form = form, img_file = profile_image)
+
+@app.route("/post/new", methods=['GET', 'POST'])
+@login_required
+def new_post():
+    form = NewPost()
+    if form.validate_on_submit():
+        # creating the object with values inserted by the user in his/her post. 
+        post = Post(title = form.title.data, content = form.content.data, author = current_user)
+        # now adding the created object to the database as record. 
+        db.session.add(post)
+        db.session.commit()
+        flash(f"Your post has been created!", "success")
+        return redirect(url_for('feeds'))
+    
+    return render_template("create_post.html", title = "New Post", form = form, legend = "New Post") 
+
+# the brackets inside the route is a variable that is interchangeable depending on the post to update. 
+# the int: syntax is to ensure that the post_id will be an int. 
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', title = post.title, post = post)
+
+@app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    # after the post was found in the database, check first if the current user was a match to the particular post.
+    if post.author != current_user:
+        # error response to html server. 
+        abort(403)
+    
+    form = NewPost()
+    
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        db.session.commit()
+        flash(f"This post has been successfully updated!", "success")
+        return redirect(url_for("post", post_id = post.id))
+    
+    elif request.method == "GET":
+        form.title.data = post.title     
+        form.content.data = post.content
+        
+    return render_template("create_post.html", title = "Update Post", form = form, legend = "Update Post") 
+
+
+@app.route("/post/<int:post_id>/delete", methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    
+    # after the post was found in the database, check first if the current user was a match to the particular post.
+    if post.author != current_user:
+        # error response to html server. 
+        abort(403)
+    
+    #deleting the post via id 
+    db.session.delete(post)
+    db.session.commit()
+    
+    # notify user 
+    flash(f"You have successfully deleted your post.", "success")
+    return redirect(url_for('feeds'))
+
+
+
 
 
 # A func can have multiple decorators. 
