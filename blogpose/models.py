@@ -48,7 +48,7 @@ class User(db.Model, UserMixin):
     
     def __repr__(self):
         return f"User ('{self.username}', '{self.email}', '{self.img_file}')"
-    
+
 
 # This class named Post is inheriting the db.Model. This is important to do when making a model.
 class Post(db.Model):
@@ -62,6 +62,7 @@ class Post(db.Model):
     # the argument inside foreign key is small case because the models in the SQL alchemy when they create the table 
     #   it automatically makes it a smallcase. Same goes on to the other models. 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+    author = db.relationship('User', backref=db.backref('post'), lazy=True)
     
     
     def __repr__(self):
