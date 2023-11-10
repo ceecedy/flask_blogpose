@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+    <!-- This is jinja2, templating engine that flask uses. -->
+    {% for post in posts: %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.img_file) }}">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="#" style="color: #a28089;">{{ post.author.fullname }}</a>
+                    <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                </div>
+                <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                    <p class="article-content">{{ post.content }}</p>
+                </div>
+        </article>
+    {% endfor %}
+{% endblock content %} <!-- explicitly mentioning what block is ending. -->
