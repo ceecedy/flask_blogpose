@@ -15,7 +15,8 @@ from flask_wtf.file import FileField, FileAllowed
 # DateField class was used to take the dates input. It is from wtforms module.
 # RadioField class is used for taking radio button inputs. From wtforms module. 
 # ValidationError class is used to validate every inputs of the user in the form.
-from wtforms import StringField, PasswordField, SubmitField, DateField, RadioField, Form, SelectField, BooleanField, ValidationError
+# TextAreaField class will make an object that has the content of the post in the Post form.
+from wtforms import StringField, PasswordField, SubmitField, DateField, RadioField, Form, SelectField, BooleanField, ValidationError, TextAreaField
 
 # importing a class that will make sure that the input should not be empty. 
 # the name of the class is "DataRequired" from module wtforms.validators. 
@@ -267,4 +268,26 @@ class ForgotPassword(FlaskForm):
     # will pass it to variable change 
     change = SubmitField('Submit')
     
+
+class NewPost(FlaskForm):
+    
+    # accept title input
+    # will pass it to the title variable 
+    title = StringField('Title', validators=[
+        DataRequired(message = 'Title is required'), 
+        Length(min = 1)
+    ])
+    
+    # accept content 
+    # will pass it to the content variable 
+    content = TextAreaField('Content', validators=[
+        DataRequired(message = 'Content is required')
+    ])
+    
+    # accept submit button 
+    # will pass it to the submit variable 
+    submit = SubmitField('Post')
+    
+
+
 
