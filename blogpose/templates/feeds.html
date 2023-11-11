@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
     <!-- This is jinja2, templating engine that flask uses. -->
-    {% for post in posts: %}
+    <!-- reversing the loop so the very updated upload has the first to be displayed. -->
+    {% for post in posts[::-1]: %}
         <article class="media content-section">
             <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.img_file) }}">
             <div class="media-body">
