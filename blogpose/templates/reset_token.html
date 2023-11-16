@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+    <section class="container-login">
+        <header>Change your Password?</header>
+        <form class="forms" action="" method="POST">
+            {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
+            <div class="input-box">
+                <label>Password</label>
+                <input required="" placeholder="Enter your new Password" type="text" name="{{ form.password.name }}">
+            </div>
+            <div class="input-box">
+                <label>Confirm Password</label>
+                <input required="" placeholder="Enter again your new Password" type="text" name="{{ form.confirm_password.name }}">
+            </div>
+            <div class="login-options">
+                <button class="login" type="submit">{{ form.change.label.text }}</button>
+            </div>
+        </form>
+    </section>
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+    <section class="container-login">
+        <header>Forgot Password?</header>
+        <form class="forms" action="" method="POST">
+            {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
+            <div class="input-box">
+                <label>Email</label>
+                <input required="" placeholder="Enter your email" type="text" name="{{ form.email.name }}">
+            </div>
+            <div class="login-options">
+                <button class="login" type="submit">{{ form.change.label.text }}</button>
+            </div>
+        </form>
+    </section>
+{% endblock content %}
