@@ -92,6 +92,10 @@
                               <div class="alert alert-info">
                                   {{ message }}
                               </div>
+                          {% elif category == 'warning' %}
+                              <div class="alert alert-warning">
+                                  {{ message }}
+                              </div>
                           {% endif %}
                       {% endfor %}
                   {% endif %}
