@@ -362,6 +362,13 @@ def reset_token(token):
     return render_template("reset_token.html", title = "Reset Password", form = form)
 
 
+# This decorator will execute first before any requests in this routes. 
+@app.before_request
+def before_request():
+    # Call the cleanup_expired_tokens method before each request
+    User.cleanup_expired_tokens()
+
+
 
 
 # A func can have multiple decorators. 
