@@ -257,8 +257,8 @@ class UpdateAccount(FlaskForm):
             if user:    
                 raise ValidationError(f"The username {email.data} already exists. Try another")
 
-
-class ForgotPassword(FlaskForm):
+# this class is to request a reset form for email. 
+class RequestResetForm(FlaskForm):
     
     # accepting email for password change. 
     # will pass it to variable email
@@ -266,7 +266,38 @@ class ForgotPassword(FlaskForm):
                                                Email()])
     # accept login button 
     # will pass it to variable change 
-    change = SubmitField('Submit')
+    change = SubmitField('Request Password Reset')
+    
+     # function to validate email field. 
+    def validate_email(self, email):
+        # getting the query of a given email if exists and pass it to variable user 
+        # the first method will be use to securely return the first result to filter. 
+        user = User.query.filter_by(email = email.data).first()
+        
+        # if user is none, then raise validation error to let the user to register first. 
+        if user is None:    
+            raise ValidationError(f"There is no account associated with the email {email.data}. Register first.")
+        
+# this class is for requesting password form. 
+class RequestPasswordForm(FlaskForm):
+    
+    # accept password 
+    # will pass it to variable password 
+    password = PasswordField('Password', validators=[
+        DataRequired(message="Password is required."),
+        Length(min=10, max=40, message="Password should be between 10 and 40 characters.")
+    ])
+     
+    # accept confirmation of password 
+    # will pass it to variable confirm_password 
+    confirm_password = PasswordField('Confirm Password', validators=[
+        DataRequired(message="Confirm your password."),
+        EqualTo('password', message="Passwords must match.")
+    ])
+    
+    # accept password reset button 
+    # will pass it to variable change 
+    change = SubmitField('Change Password')
     
 
 class NewPost(FlaskForm):
