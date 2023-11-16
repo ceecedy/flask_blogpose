@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request, abort
 
 # Importing the forms.py to use the register class and login class. 
 # They will be used to pass them in render_template via a variable. 
-from blogpose.forms import Register, Login, ForgotPassword, UpdateAccount, NewPost
+from blogpose.forms import Register, Login, UpdateAccount, NewPost, RequestResetForm, RequestPasswordForm
 
 # import the classes from models.py 
 from blogpose.models import User, Post
@@ -12,7 +12,8 @@ from blogpose.models import User, Post
 # app is from the init of the blogpose package 
 # bcrypt is from the init of the blogpose package
 # db is from the init of the blogpose package
-from blogpose import app, bcrypt, db
+# mail initialized from the init, for mail server. 
+from blogpose import app, bcrypt, db, mail
 
 # importing a login function to the function login 
 # for more informations, see login_user function.
@@ -29,6 +30,8 @@ import secrets, os
 # importing image resizer module name pillow 
 from PIL import Image
 
+# importing message from flask-mail for additional mail functions
+from flask_mail import Message
 
 # This app route is a route api. This is basically the home route. 
 @app.route("/") 
@@ -36,16 +39,43 @@ from PIL import Image
 def home():
     return render_template("home.html")
 
+
 @app.route("/feeds")
 @login_required
 def feeds():
     # getting all the post in the database and set it to one variable 
-    posts = Post.query.all()
+    # posts = Post.query.all()
+    # making this a paginate method to make a object of all the data in the Post model to become paginated. 
+    # the order_by method after query method is to order the data inside the Post model according to 
+    #   the parameter inside the order_by
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate()
     return render_template("feeds.html", title = "Feeds", posts = posts)
+
+
+# when the certain user clicks a name to its post, it will output all posts relating to that user. 
+@app.route("/user/<string:username>")
+@login_required
+def user_post(username):
+    # getting the user 
+    # if none user was get, then return 404 or not found. 
+    user = User.query.filter_by(username = username).first_or_404()
+    # getting all the post in the database and set it to one variable 
+    # posts = Post.query.all() 
+    # making this a paginate method to make a object of all the data in the Post model to become paginated. 
+    # the order_by method after query method is to order the data inside the Post model according to 
+    #   the parameter inside the order_by
+    # the forward slash will help you to break the query to multiple line. 
+    posts = Post.query.filter_by(author = user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate()
+        
+    return render_template("user_posts.html", title = "Feeds", posts = posts, user = user)
+
 
 @app.route("/about")
 def about():
     return render_template("about.html", title = "About")
+
 
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
@@ -91,6 +121,7 @@ def register():
 
     return render_template("register.html", title = "Register", form = form)
 
+
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
     # this if statement will check if there's a existing user logged in, in the system 
@@ -124,15 +155,12 @@ def login():
         
     return render_template("login.html", title = "Login", form = form)
 
+
 @app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route("/forgotpassword")
-def forgot_password():
-    form = ForgotPassword()
-    return render_template("forgot_password.html", title = "Forgot Password", form = form)
 
 # function to process the uploads of user to their profile pictures. 
 def save_picture(form_picture):
@@ -153,6 +181,7 @@ def save_picture(form_picture):
     # if we put the original picture in the web, it might affect the performance as the user grows. 
     
     return picture_fn
+
 
 @app.route("/account", methods = ['GET', 'POST'])
 @login_required
@@ -201,6 +230,7 @@ def account():
     # the img_file argument is for the database to pass the value of the profile picture to UI layout. 
     return render_template("account.html", title = "Account Settings", form = form, img_file = profile_image)
 
+
 @app.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
@@ -216,6 +246,7 @@ def new_post():
     
     return render_template("create_post.html", title = "New Post", form = form, legend = "New Post") 
 
+
 # the brackets inside the route is a variable that is interchangeable depending on the post to update. 
 # the int: syntax is to ensure that the post_id will be an int. 
 @app.route("/post/<int:post_id>")
@@ -223,6 +254,7 @@ def post(post_id):
     post = Post.query.get_or_404(post_id)
 
     return render_template('post.html', title = post.title, post = post)
+
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
 @login_required
@@ -267,6 +299,67 @@ def delete_post(post_id):
     flash(f"You have successfully deleted your post.", "success")
     return redirect(url_for('feeds'))
 
+
+# function to send the current email. 
+def send_reset_email(user):
+    token = user.get_reset_token()
+    # sending the email using url, using msg class from flask-mail
+    msg = Message("Password Reset Request", sender = "blogpose@support.com", recipients = [user.email])
+    
+    msg.body = f''' To reset your password, visit the following link:
+    
+    {url_for('reset_token', token = token, _external = True)}
+    
+    If you did not make this request, simply ignore this message. 
+    '''
+    
+    # finally passing the message to the email of the user.
+    mail.send(msg)
+    
+
+@app.route("/resetpassword", methods = ['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('feeds'))
+    form = RequestResetForm()
+    
+    # validating the email entered by the user. 
+    # after validating we should send the current user email, and we will make a function for that  
+    #   just above on this function. 
+    if form.validate_on_submit():
+        user = User.query.filter_by(email = form.email.data).first()
+        send_reset_email(user)
+        flash(f"The email {form.email.data} has been sent with instructions to reset your password.", "info")
+        return redirect(url_for('login'))   
+    return render_template("reset_request.html", title = "Reset Password", form = form)
+
+    
+@app.route("/resetpassword/<token>", methods = ['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('feeds'))
+    user = User.verify_reset_token(token)
+    
+    # checking if there is a verified user 
+    if user is None:
+        flash(f"That is now invalid or expired token.", "warning")
+        return redirect(url_for('reset_request'))
+    
+    form = RequestPasswordForm()
+    if form.validate_on_submit(): # read method if forgotten how it is working. 
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        # commit the addition of user in the database 
+        db.session.commit()
+        # finally flash the user and redirect the user to the homepage. 
+        flash(f'Your account password is now changed!', 'success')
+        # the success second string is called category (a parameter), 
+        # and it will be passed to the layout design that is named category in jinja2 
+        # from the word itself, flash will pop up a notification or a word in your screen that the account was created. 
+        print("Redirecting...")  # Check if this line is executed
+        return redirect(url_for('home'))
+        # this redirect function will execute if input is validated, it will redirect to homepage. 
+    return render_template("reset_token.html", title = "Reset Password", form = form)
 
 
 
