@@ -1,7 +1,11 @@
 # importing datetime class 
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from blogpose import db, login_manager 
+# now adding app to this import because secret key is essential to the serializer. 
+from blogpose import db, login_manager, app, oauth
+
+# specific import from oauthlib for generating token
+from oauthlib.common import generate_token
 
 # this is used for the status feedback of the logged in user. 
 # for more informations, read the UserMixin.
@@ -45,6 +49,46 @@ class User(db.Model, UserMixin):
     # backref adds another column to the Post Model and it will named Author, the value passed will be the instance of the user. 
     # lazy argument makes the sqlalchemy to load the data necessary from the database in one go. 
     posts = db.relationship("Post", backref = "Author", lazy = True)
+    
+   # to store the oauth token of the user.
+    oauth_token = db.Column(db.String(200))
+    token_timestamp = db.Column(db.DateTime)
+    token_expiration = db.Column(db.DateTime)
+
+
+    # to ge token
+    def get_reset_token(self, expiration=1800):
+        # Assuming you have a 'timestamp' column in your User model to store when the token was created.
+        token = generate_token()
+        self.oauth_token = token
+        self.token_timestamp = datetime.utcnow()
+        self.token_expiration = self.token_timestamp + timedelta(seconds=expiration)
+        db.session.commit()
+        return token
+
+    # to verify token
+    @staticmethod
+    def verify_reset_token(token):
+        # Use the Flask-OAuthlib facility to verify the token
+        user = User.query.filter_by(oauth_token=token).first()
+        if user and user.token_timestamp >= (datetime.utcnow() - timedelta(hours=24)):
+            return user
+        return None
+    
+    # cleaning expired tokens. 
+    @staticmethod
+    def cleanup_expired_tokens():
+        # Remove expired tokens from the database
+        expired_tokens = User.query.filter(
+            User.token_timestamp < (datetime.utcnow() - timedelta(hours=24))
+        ).all()
+
+        for user in expired_tokens:
+            user.oauth_token = None
+            user.token_timestamp = None
+            user.token_expiration = None
+
+        db.session.commit()
     
     def __repr__(self):
         return f"User ('{self.username}', '{self.email}', '{self.img_file}')"
