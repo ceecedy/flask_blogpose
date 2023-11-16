@@ -26,3 +26,7 @@ legend {
 .modal-backdrop {
     z-index: 1040;
 }
+
+.user-posts {
+    color: #a28089;
+}
