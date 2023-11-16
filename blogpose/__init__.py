@@ -9,6 +9,13 @@ from flask_bcrypt import Bcrypt
 # check the description of LoginManager for informations 
 from flask_login import LoginManager
 
+# to have a send email function for authentication
+from flask_mail import Mail
+
+# importing oauth provider also here because the init is not reaching here. 
+from flask_oauthlib.provider import OAuth2Provider
+
+
 app = Flask(__name__)
 # When using this two class that is made to be a form, we need to make a secret key. 
 # This will protect your users from modifying cookies and malicious attacks across web 
@@ -36,6 +43,21 @@ login_manager.login_view = "login"
 # This will be get also by the routes.py if needed to login first. 
 # declare initially this line below, if the user had access the account form while not logged in. 
 login_manager.login_message_category = "info"
+
+# initializing the oauth. 
+oauth = OAuth2Provider(app)
+
+# email server configurations. 
+app.config["MAIL_SERVER"] = "smtp.googlemail.com"
+app.config["MAIL_PORT"] = "587"
+app.config["MAIL_USE_TLS"] = "True"
+
+# using environment variables for private access 
+app.config["MAIL_USERNAME"] = "jceee.castro@gmail.com"
+app.config["MAIL_PASSWORD"] = "rdbl qzno udxr jtlh"
+
+# after setting up the mail server, we will now initialize it. 
+mail = Mail(app)
 
 # importing routes at this point to load up the routes at the init. 
 from blogpose import routes
