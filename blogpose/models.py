@@ -1,8 +1,11 @@
 # importing datetime class 
 from datetime import datetime, timedelta
 
+# importing current app 
+from flask import current_app
+
 # now adding app to this import because secret key is essential to the serializer. 
-from blogpose import db, login_manager, app, oauth
+from blogpose import db, login_manager, oauth
 
 # specific import from oauthlib for generating token
 from oauthlib.common import generate_token
