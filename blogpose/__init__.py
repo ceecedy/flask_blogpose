@@ -62,12 +62,17 @@ def create_app(config_class = Config):
     from blogpose.posts.routes import posts
     from blogpose.main.routes import main
     
+    #importing error handler module blueprint
+    from blogpose.errors.handlers import errors
+    
     # registering blueprints of the packages 
     # this is to let this "__init__.py" file to get the blueprints of sub-packages to let the sub-packages 
     #   to be part of this "__init__.py" to become one big system. 
     app.register_blueprint(main)
     app.register_blueprint(users)
     app.register_blueprint(posts)
+    app.register_blueprint(errors)
+    
     
     # finally return app when everything is within the app. 
     return app
