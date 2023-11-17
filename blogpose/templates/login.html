@@ -39,9 +39,9 @@
             <div class="login-options">
                 <button class="login" type="submit">{{ form.login.label.text }}</button>
                 <p class="forgot-password">Forgot your password?
-                    <a class="password-anchor" href="{{ url_for('reset_request') }}">Click here!</a>
+                    <a class="password-anchor" href="{{ url_for('users.reset_request') }}">Click here!</a>
                 </p>
-                <p class="signup-access">Don't have an Account? <a class="signup-anchor" href="{{ url_for('register') }}">Sign up here!</a></p>
+                <p class="signup-access">Don't have an Account? <a class="signup-anchor" href="{{ url_for('users.register') }}">Sign up here!</a></p>
             </div>
         </form>
     </section>
