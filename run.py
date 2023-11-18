@@ -13,6 +13,6 @@ if __name__ == "__main__":
     # else, if the tables exists, then it will not modify the existing tables. 
     with app.app_context():
         # Call the cleanup_expired_tokens method before each request
-        User.cleanup_expired_tokens()
         db.create_all()
+        User.cleanup_expired_tokens()
         app.run(debug=True)
