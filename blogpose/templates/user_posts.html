@@ -5,7 +5,7 @@
     <!-- reversing the loop so the very updated upload has the first to be displayed. -->
     {% for post in posts.items: %}
         <article class="media content-section">
-            <img class="rounded-circle article-img" src="{{ url_for('users.static', filename='profile_pics/' + post.author.img_file) }}">
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.img_file) }}">
             <div class="media-body">
                 <div class="article-metadata">
                     <a class="mr-2" href="{{ url_for('users.user_post', username = post.author.username) }}" style="color: #a28089;">{{ post.author.fullname }}</a>
