@@ -51,7 +51,7 @@ class User(db.Model, UserMixin):
     # The argument backref will reference the user who post a particular post. 
     # backref adds another column to the Post Model and it will named Author, the value passed will be the instance of the user. 
     # lazy argument makes the sqlalchemy to load the data necessary from the database in one go. 
-    posts = db.relationship("Post", backref = "Author", lazy = True)
+    posts = db.relationship("Post", back_populates="author", lazy = True)
     
    # to store the oauth token of the user.
     oauth_token = db.Column(db.String(200))
@@ -109,7 +109,7 @@ class Post(db.Model):
     # the argument inside foreign key is small case because the models in the SQL alchemy when they create the table 
     #   it automatically makes it a smallcase. Same goes on to the other models. 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
-    author = db.relationship('User', backref=db.backref('post'), lazy=True)
+    author = db.relationship('User', back_populates="posts", lazy=True)
     
     
     def __repr__(self):
