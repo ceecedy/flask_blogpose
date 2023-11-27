@@ -37,7 +37,7 @@ def register():
     # this if statement will check if there's a existing user logged in, in the system 
     # and saw the register button and attempting to click it. 
     if current_user.is_authenticated:
-        return redirect(url_for('users.home'))
+        return redirect(url_for('main.home'))
     form = Register()
     print(request.form) # outputting all inputs in the register form to the terminal in list form. 
     if form.validate_on_submit(): # read method if forgotten how it is working. 
@@ -68,7 +68,7 @@ def register():
         # and it will be passed to the layout design that is named category in jinja2 
         # from the word itself, flash will pop up a notification or a word in your screen that the account was created. 
         print("Redirecting...")  # Check if this line is executed
-        return redirect(url_for('users.home'))
+        return redirect(url_for('main.home'))
         # this redirect function will execute if input is validated, it will redirect to homepage. 
     else:
         print(form.errors) # to see the errors to this validation. 
@@ -227,7 +227,7 @@ def reset_token(token):
         # and it will be passed to the layout design that is named category in jinja2 
         # from the word itself, flash will pop up a notification or a word in your screen that the account was created. 
         print("Redirecting...")  # Check if this line is executed
-        return redirect(url_for('users.home'))
+        return redirect(url_for('main.home'))
         # this redirect function will execute if input is validated, it will redirect to homepage. 
     return render_template("reset_token.html", title = "Reset Password", form = form)
     
