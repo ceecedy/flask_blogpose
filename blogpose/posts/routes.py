@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, flash, redirect, request, abort
+from flask import Blueprint, render_template, url_for, flash, redirect, request, abort, jsonify
 
 # importing a login function to the function login 
 # current_user is a variable from flask_login that holds a user data. 
@@ -10,7 +10,7 @@ from flask_login import current_user, login_required
 from blogpose import db
 
 # Importing Post Model. 
-from blogpose.models import Post
+from blogpose.models import Post, Comment
 
 # importing NewPost form from the very root package. 
 from blogpose.posts.forms import NewPost
@@ -99,6 +99,28 @@ def delete_post(post_id):
     # notify user 
     flash(f"You have successfully deleted your post.", "success")
     return redirect(url_for('posts.feeds'))
+
+
+@posts.route('/post_comment', methods=['POST', 'GET'])
+def post_comment():
+    post_id = request.form.get('post_id')
+    comment_content = request.form.get('comment_content')
+
+    # Validate and save the comment to the database
+    # (You'll need to adjust this based on your actual models and database structure)
+    post = Post.query.get(post_id)
+    if post:
+        new_comment = Comment(content=comment_content, user=current_user, post=post)
+        db.session.add(new_comment)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Comment posted successfully'})
+
+    return jsonify({'success': False, 'message': 'Invalid post ID'})
+
+
+
+
 
 
 
