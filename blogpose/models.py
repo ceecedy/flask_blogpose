@@ -114,3 +114,21 @@ class Post(db.Model):
     
     def __repr__(self):
         return f"Post ('{self.title}', '{self.date_posted}')" 
+    
+    
+# Comment model
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    date_commented = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    # User who made the comment
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('comments', lazy=True))
+
+    # Post that the comment belongs to
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    post = db.relationship('Post', backref=db.backref('comments', lazy=True))
+
+    def __repr__(self):
+        return f"Comment ('{self.content}', '{self.date_commented}')"
