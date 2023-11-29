@@ -12,7 +12,91 @@
                 </div>
                 <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
                     <p class="article-content">{{ post.content }}</p>
+                
+                <!-- Clickable comment and like  field -->
+                <div class="comment-options">
+                    <div class="clickable-like" onclick="likePost('{{ post.id }}')">
+                        Like
+                    </div>
+                    <div class="clickable-comment" onclick="toggleCommentArea('{{ post.id }}')">
+                        Comment
+                    </div>
                 </div>
+
+                <!-- Comment area and buttons -->
+                <div id="commentArea{{ post.id }}" class="comment-area" style="display: none; max-width: 100%;">
+                    <textarea class="text-area-comment" id="commentTextarea{{ post.id }}" rows="3" placeholder="Write your comment" style="width: 100%; margin-top: 15px"></textarea>
+                    <div style="text-align: right; margin-top: 8px;">
+                        <button class="btn btn-success" onclick="postComment('{{ post.id }}')">Post Comment</button>
+                        <button class="btn btn-secondary" onclick="hideCommentArea('{{ post.id }}')">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Display Comments -->
+                {% if post.comments %}
+                    <div class="comment-container">
+                        {% for comment in post.comments %}
+                            <article class="media comment-border">
+                                <img class="rounded-circle article-img small-profile-img" src="{{ url_for('static', filename='profile_pics/' + post.author.img_file) }}">
+                                <div class="comment">
+                                    <div class="comment-metadata">
+                                        <a class="mr-2" href="{{ url_for('users.user_post', username=comment.user.username) }}" style="color: #a28089;">{{ comment.user.fullname }}</a>
+                                        <small class="text-muted">{{ comment.date_commented.strftime('%Y-%m-%d') }}</small>
+                                    </div>
+                                    <p>{{ comment.content }}</p>
+                                </div>
+                            </article>
+                            <hr class="comment-separator">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            </div>
         </article>
     {% endfor %}
+
+    <script>
+        function toggleCommentArea(postId) {
+            var commentArea = document.getElementById('commentArea' + postId);
+            commentArea.style.display = (commentArea.style.display === 'none' || commentArea.style.display === '') ? 'block' : 'none';
+        }
+    
+        function hideCommentArea(postId) {
+            document.getElementById('commentArea' + postId).style.display = 'none';
+        }
+    
+        function postComment(postId) {
+            var commentContent = document.getElementById('commentTextarea' + postId).value;
+
+            fetch('/post_comment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'post_id': postId,
+                    'comment_content': commentContent,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Optionally, you can clear the textarea after posting the comment
+                    document.getElementById('commentTextarea' + postId).value = '';
+    
+                    // Reload the page to see the updated comments
+                    location.reload();
+                } else {
+                    alert('Failed to post comment: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error posting comment:', error);
+            });
+    
+            // Hide the comment area
+            hideCommentArea(postId);
+        }
+    </script>
+
 {% endblock content %} <!-- explicitly mentioning what block is ending. -->
