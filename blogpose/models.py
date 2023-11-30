@@ -132,3 +132,22 @@ class Comment(db.Model):
 
     def __repr__(self):
         return f"Comment ('{self.content}', '{self.date_commented}')"
+    
+    
+# Like model 
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date_liked = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+     # User who liked
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('likes', lazy=True))
+
+    # Post that the like belongs to
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    post = db.relationship('Post', backref=db.backref('likes', lazy=True))
+
+    def __repr__(self):
+        return f"Like ('{self.date_liked}')"
+    
+    
