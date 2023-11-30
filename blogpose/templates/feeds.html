@@ -16,7 +16,7 @@
                 <!-- Clickable comment and like  field -->
                 <div class="comment-options">
                     <div class="clickable-like" onclick="likePost('{{ post.id }}')">
-                        Like
+                        <span id="likeCount{{ post.id }}">0</span> Likes
                     </div>
                     <div class="clickable-comment" onclick="toggleCommentArea('{{ post.id }}')">
                         Comment
@@ -96,6 +96,35 @@
     
             // Hide the comment area
             hideCommentArea(postId);
+        }
+
+        function likePost(postId) {
+            fetch('/like_post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'post_id': postId,
+                    'user_id': '{{ current_user.id }}',  // Update with the actual way to get the user ID
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the like count
+                    document.getElementById('likeCount' + postId).innerText = data.total_likes;
+        
+                    // Toggle the like button appearance based on whether the post is liked or not
+                    var likeButton = document.querySelector('.clickable-like');
+                    likeButton.classList.toggle('liked', data.liked);
+                } else {
+                    alert('Failed to like post: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error liking post:', error);
+            });
         }
     </script>
 
