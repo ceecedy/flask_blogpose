@@ -10,7 +10,7 @@ from flask_login import current_user, login_required
 from blogpose import db
 
 # Importing Post Model. 
-from blogpose.models import Post, Comment
+from blogpose.models import Post, Comment, Like
 
 # importing NewPost form from the very root package. 
 from blogpose.posts.forms import NewPost
@@ -117,6 +117,34 @@ def post_comment():
         return jsonify({'success': True, 'message': 'Comment posted successfully'})
 
     return jsonify({'success': False, 'message': 'Invalid post ID'})
+
+
+@posts.route('/like_post', methods = ['POST'])
+def like_post():
+    post_id = request.form.get('post_id')
+    user_id = request.form.get('user_id')
+    
+    # check if the specific user already liked the post. 
+    existing_like = Like.query.filter_by(post_id = post_id, user_id = user_id).first()
+    
+    # if not none
+    if existing_like:
+        db.session.delete(existing_like)
+        db.session.commit()
+        liked = False
+    
+    # if none 
+    else:
+        new_like = Like(post_id = post_id, user_id = user_id)
+        db.session.add(new_like)
+        db.session.commit()
+        liked = True
+    
+    # get the total number likes of the post 
+    total_likes = Like.query.filter_by(post_id = post_id).count()
+    
+    return jsonify({'success': True, 'liked': liked, 'total_likes': total_likes})
+    
 
 
 
