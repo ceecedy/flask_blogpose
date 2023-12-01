@@ -12,6 +12,15 @@
                 </div>
                 <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
                     <p class="article-content">{{ post.content }}</p>
+
+                <!-- Display Images -->
+                {% if post.images %}
+                    <div class="image-container">
+                        {% for image_filename in post.images %}
+                            <img class="post-image" src="{{ url_for('static', filename='images_upload/' + image_filename) }}" alt="Post Image">
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 
                 <!-- Clickable comment and like  field -->
                 <div class="comment-options">
