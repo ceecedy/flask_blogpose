@@ -14,6 +14,9 @@ from oauthlib.common import generate_token
 # for more informations, read the UserMixin.
 from flask_login import UserMixin
 
+# using PickleType from sqlalchemy to make a list on multiple images uploaded by the client to their post. 
+from sqlalchemy import PickleType
+
 # func with decorator. Called user_loader.  
 # this is for reloading the user from the user id stored in the session. 
 # read the descriptions in the decorator for more informations.
@@ -104,6 +107,9 @@ class Post(db.Model):
     # this will accept datetime where the default value to be accepted is the current datetime at specific utc. 
     date_posted = db.Column(db.DateTime, nullable = False, default = datetime.utcnow) 
     content = db.Column(db.Text, nullable = False)
+    
+    # Use PickleType to store a list of image filenames
+    images = db.Column(PickleType)
     
     # adding user id to a particular post. 
     # the argument inside foreign key is small case because the models in the SQL alchemy when they create the table 
