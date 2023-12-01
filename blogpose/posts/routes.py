@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, flash, redirect, request, abort, jsonify
+from flask import Blueprint, render_template, url_for, flash, redirect, request, abort, jsonify, current_app
 
 # importing a login function to the function login 
 # current_user is a variable from flask_login that holds a user data. 
@@ -15,6 +15,10 @@ from blogpose.models import Post, Comment, Like
 # importing NewPost form from the very root package. 
 from blogpose.posts.forms import NewPost
 
+# to rename the name of the image uploaded by the client and make it unique and secure. 
+# importing also the os to work together with the path. 
+from werkzeug.utils import secure_filename
+import os 
 
 # instantiating a blueprint named users
 posts = Blueprint('posts', __name__)
@@ -37,11 +41,26 @@ def feeds():
 def new_post():
     form = NewPost()
     if form.validate_on_submit():
+        # Handle image uploads
+        images = []
+        if 'image' in request.files:
+            for image_file in request.files.getlist('image'):
+                if image_file:
+                    # Securely save the uploaded file
+                    filename = secure_filename(image_file.filename)
+                    image_path = os.path.join(current_app.root_path, 'static/images_upload', filename)
+                    image_file.save(image_path)
+                    
+                    # now appending the image processed.
+                    images.append(filename)
+                
         # creating the object with values inserted by the user in his/her post. 
-        post = Post(title = form.title.data, content = form.content.data, author = current_user)
+        post = Post(title = form.title.data, content = form.content.data, images = images, author = current_user)
+        
         # now adding the created object to the database as record. 
         db.session.add(post)
         db.session.commit()
+        
         flash(f"Your post has been created!", "success")
         return redirect(url_for('posts.feeds'))
     
