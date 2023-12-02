@@ -50,18 +50,22 @@
 
                 <!-- Modal for displaying enlarged image -->
                 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered justify-content-center" role="document" style="min-width: 650px; max-width: 650px;">
-                        <div class="modal-content-posts" 
-                            style=" 
-                                background-color: #fefefe;  
-                                border: 1px solid #888; 
-                                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);">
+                    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 650px; max-width: 650px; z-index: 1500;">
+                        <div class="modal-content-posts">
                             <div class="modal-body text-center">
                                 <img id="enlargedImage" class="img-fluid" alt="Enlarged Image">
                             </div>
+                            <div class="modal-footer" style="justify-content: space-between;">
+                                <button class="btn btn-link image-nav-btn" id="prevImageBtn" style="cursor: pointer;">
+                                    <i class="material-icons">chevron_left</i>
+                                </button>                                
+                                <button class="btn btn-link image-nav-btn" id="nextImageBtn" style="cursor: pointer;">
+                                    <i class="material-icons">chevron_right</i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </div>                
 
                 <!-- Clickable comment and like  field -->
                 <div class="comment-options">
@@ -106,6 +110,10 @@
     {% endfor %}
 
     <script>
+
+        var images = []; // Store all image URLs
+        var currentImageIndex = 0;
+
         function toggleCommentArea(postId) {
             var commentArea = document.getElementById('commentArea' + postId);
             commentArea.style.display = (commentArea.style.display === 'none' || commentArea.style.display === '') ? 'block' : 'none';
@@ -177,13 +185,34 @@
             });
         }
         
-        // Function to handle image click event
-        document.querySelectorAll('.clickable-image').forEach(function(image) {
+       // Function to handle image click event
+        document.querySelectorAll('.clickable-image').forEach(function(image, index) {
             image.addEventListener('click', function() {
-                var enlargedImage = document.getElementById('enlargedImage');
-                var imageUrl = this.getAttribute('data-enlarged-src');
-                enlargedImage.src = imageUrl;
+                images = document.querySelectorAll('.clickable-image');
+                currentImageIndex = index;
+                showImage(images[currentImageIndex].getAttribute('data-enlarged-src'));
             });
+        });
+
+        // Function to show image in modal
+        function showImage(imageUrl) {
+            var enlargedImage = document.getElementById('enlargedImage');
+            enlargedImage.src = imageUrl;
+            $('#imageModal').modal('show');
+        }
+
+        // Function to handle next image navigation
+        document.getElementById('nextImageBtn').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent modal from closing
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            showImage(images[currentImageIndex].getAttribute('data-enlarged-src'));
+        });
+
+        // Function to handle previous image navigation
+        document.getElementById('prevImageBtn').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent modal from closing
+            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+            showImage(images[currentImageIndex].getAttribute('data-enlarged-src'));
         });
     </script>
 
