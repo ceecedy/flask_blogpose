@@ -57,7 +57,7 @@
 }
 
 /* Modal CSS */
-.modal {
+.modal-profile {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
@@ -78,6 +78,20 @@
     width: 30%; /* Could be more responsive */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
+
+.modal-content-posts {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fefefe; 
+    background-clip: padding-box;
+    border: 2px solid #a28089;
+    border-radius: 0.3rem;
+    outline: 0;
+  }
+
 
 /* Close button */
 .close {
