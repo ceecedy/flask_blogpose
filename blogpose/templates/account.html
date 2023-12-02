@@ -7,7 +7,7 @@
             <div class="media">
                 <img class="rounded-circle account-img clickable" src="{{ img_file }}" id="profileImage">
                 <!-- Modal HTML -->
-                <div id="myModal" class="modal">
+                <div id="myProfileModal" class="modal-profile">
                     <div class="modal-content">
                         {{ form.csrf_token }} <!-- This is very essential for validate_on_submit() function -->
                         <span class="close">&times;</span>
@@ -173,7 +173,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const profileImage = document.getElementById("profileImage");
-            const modal = document.getElementById("myModal");
+            const modal = document.getElementById("myProfileModal");
             const spanClose = document.querySelector(".close");
         
             profileImage.addEventListener("click", function() {
