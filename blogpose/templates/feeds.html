@@ -13,15 +13,56 @@
                 <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
                     <p class="article-content">{{ post.content }}</p>
 
-                <!-- Display Images -->
+               <!-- Display Images -->
                 {% if post.images %}
-                    <div class="image-container">
-                        {% for image_filename in post.images %}
-                            <img class="post-image" src="{{ url_for('static', filename='images_upload/' + image_filename) }}" alt="Post Image">
-                        {% endfor %}
-                    </div>
+                <div class="image-container mx-auto d-flex">
+                    {% for image_filename in post.images %}
+                        {% if loop.index <= 2 %}
+                            <div class="post-image-container mr-2">
+                                <img class="post-image clickable-image img-thumbnail" 
+                                    src="{{ url_for('static', filename='images_upload/' + image_filename) }}" 
+                                    alt="Post Image" 
+                                    data-toggle="modal" 
+                                    data-target="#imageModal"
+                                    data-enlarged-src="{{ url_for('static', filename='images_upload/' + image_filename) }}"
+                                    style="max-width: 200px; max-height: 200px; margin-bottom: 20px;">
+                            </div>  
+                        {% elif loop.index == 3 %}
+                            <!-- Indicator for more photos -->
+                            <div class="post-image-container" 
+                                style="
+                                    border: 1px solid #a28089; 
+                                    width: 200px; 
+                                    height: 200px; 
+                                    margin-bottom: 20px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;
+                                    color: #a28089">
+                                <p class="more-photos-indicator">+{{ post.images|length - 2 }}</p>
+                                <p class="more-photos-indicator">more photos...</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
                 {% endif %}
-                
+
+                <!-- Modal for displaying enlarged image -->
+                <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered justify-content-center" role="document" style="min-width: 650px; max-width: 650px;">
+                        <div class="modal-content-posts" 
+                            style=" 
+                                background-color: #fefefe;  
+                                border: 1px solid #888; 
+                                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);">
+                            <div class="modal-body text-center">
+                                <img id="enlargedImage" class="img-fluid" alt="Enlarged Image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Clickable comment and like  field -->
                 <div class="comment-options">
                     <div class="clickable-like" onclick="likePost('{{ post.id }}')">
@@ -135,6 +176,15 @@
                 console.error('Error liking post:', error);
             });
         }
+        
+        // Function to handle image click event
+        document.querySelectorAll('.clickable-image').forEach(function(image) {
+            image.addEventListener('click', function() {
+                var enlargedImage = document.getElementById('enlargedImage');
+                var imageUrl = this.getAttribute('data-enlarged-src');
+                enlargedImage.src = imageUrl;
+            });
+        });
     </script>
 
 {% endblock content %} <!-- explicitly mentioning what block is ending. -->
