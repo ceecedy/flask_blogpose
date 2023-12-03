@@ -13,12 +13,11 @@
                 <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
                     <p class="article-content">{{ post.content }}</p>
 
-               <!-- Display Images -->
+                <!-- Display Images -->
                 {% if post.images %}
-                <div class="image-container mx-auto d-flex">
-                    {% for image_filename in post.images %}
-                        {% if loop.index <= 2 %}
-                            <div class="post-image-container mr-2">
+                    <div class="image-container mx-auto d-flex">
+                        {% for image_filename in post.images %}
+                            <div class="post-image-container mr-2 {% if loop.index > 2 %}hidden-image{% endif %}">
                                 <img class="post-image clickable-image img-thumbnail" 
                                     src="{{ url_for('static', filename='images_upload/' + image_filename) }}" 
                                     alt="Post Image" 
@@ -26,26 +25,26 @@
                                     data-target="#imageModal"
                                     data-enlarged-src="{{ url_for('static', filename='images_upload/' + image_filename) }}"
                                     style="max-width: 200px; max-height: 200px; margin-bottom: 20px;">
-                            </div>  
-                        {% elif loop.index == 3 %}
-                            <!-- Indicator for more photos -->
-                            <div class="post-image-container" 
-                                style="
-                                    border: 1px solid #a28089; 
-                                    width: 200px; 
-                                    height: 200px; 
-                                    margin-bottom: 20px;
-                                    display: flex;
-                                    flex-direction: column;
-                                    justify-content: center;
-                                    align-items: center;
-                                    color: #a28089">
-                                <p class="more-photos-indicator">+{{ post.images|length - 2 }}</p>
-                                <p class="more-photos-indicator">more photos...</p>
                             </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                            {% if loop.index == 2 and post.images|length > 2 %}
+                                <!-- Indicator for more photos -->
+                                <div class="post-image-container" 
+                                    style="
+                                        border: 1px solid #a28089; 
+                                        width: 200px; 
+                                        height: 200px; 
+                                        margin-bottom: 20px;
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: center;
+                                        align-items: center;
+                                        color: #a28089">
+                                    <p class="more-photos-indicator">+{{ post.images|length - 2 }}</p>
+                                    <p class="more-photos-indicator">more photos...</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 {% endif %}
 
                 <!-- Modal for displaying enlarged image -->
@@ -185,11 +184,12 @@
             });
         }
         
-       // Function to handle image click event
-        document.querySelectorAll('.clickable-image').forEach(function(image, index) {
+        // Function to handle image click event
+        document.querySelectorAll('.clickable-image').forEach(function(image) {
             image.addEventListener('click', function() {
-                images = document.querySelectorAll('.clickable-image');
-                currentImageIndex = index;
+                var postImages = image.closest('.image-container').querySelectorAll('.clickable-image');
+                images = Array.from(postImages); // Convert NodeList to array for easier manipulation
+                currentImageIndex = Array.from(postImages).indexOf(image);
                 showImage(images[currentImageIndex].getAttribute('data-enlarged-src'));
             });
         });
@@ -214,6 +214,7 @@
             currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
             showImage(images[currentImageIndex].getAttribute('data-enlarged-src'));
         });
+        
     </script>
 
 {% endblock content %} <!-- explicitly mentioning what block is ending. -->
