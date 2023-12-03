@@ -3,18 +3,114 @@
     <article class="media content-section">
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.img_file) }}">
         <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="{{ url_for('users.user_post', username = post.author.username) }}" style="color: #a28089;">{{ post.author.fullname }}</a>
-                <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            <div class="article-metadata d-flex justify-content-between">
+                <div class="poster-name-date-update d-flex align-items-center">
+                    <a class="mr-2" href="{{ url_for('users.user_post', username = post.author.username) }}" style="color: #a28089;">{{ post.author.fullname }}</a>
+                    <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                </div>
                 {% if post.author == current_user %}
-                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('posts.update_post', post_id=post.id) }}">Update</a>
-                    <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                    <div class="option-right">
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('posts.update_post', post_id=post.id) }}">Update</a>
+                        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                    </div>
                 {% endif %}
             </div>
             <h2 class="article-title">{{ post.title }}</h2>
-                <p class="article-content">{{ post.content }}</p>
+            <p class="article-content">{{ post.content }}</p>
+
+            <!-- Display Images -->
+            {% if post.images %}
+                <div class="image-container mx-auto d-flex">
+                    {% for image_filename in post.images %}
+                        <div class="post-image-container mr-2 {% if loop.index > 2 %}hidden-image{% endif %}">
+                            <img class="post-image clickable-image img-thumbnail" 
+                                src="{{ url_for('static', filename='images_upload/' + image_filename) }}" 
+                                alt="Post Image" 
+                                data-toggle="modal" 
+                                data-target="#imageModal"
+                                data-enlarged-src="{{ url_for('static', filename='images_upload/' + image_filename) }}"
+                                style="max-width: 200px; max-height: 200px; margin-bottom: 20px;">
+                        </div>
+                        {% if loop.index == 2 and post.images|length > 2 %}
+                            <!-- Indicator for more photos -->
+                            <div class="post-image-container" 
+                                style="
+                                    border: 1px solid #a28089; 
+                                    width: 200px; 
+                                    height: 200px; 
+                                    margin-bottom: 20px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;
+                                    color: #a28089">
+                                <p class="more-photos-indicator">+{{ post.images|length - 2 }}</p>
+                                <p class="more-photos-indicator">more photos...</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Modal for displaying enlarged image -->
+            <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 650px; max-width: 650px; z-index: 1500;">
+                    <div class="modal-content-posts">
+                        <div class="modal-body text-center">
+                            <img id="enlargedImage" class="img-fluid" alt="Enlarged Image">
+                        </div>
+                        <div class="modal-footer" style="justify-content: space-between;">
+                            <button class="btn btn-link image-nav-btn" id="prevImageBtn" style="cursor: pointer;">
+                                <i class="material-icons">chevron_left</i>
+                            </button>                                
+                            <button class="btn btn-link image-nav-btn" id="nextImageBtn" style="cursor: pointer;">
+                                <i class="material-icons">chevron_right</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- Clickable comment and like  field -->
+            <div class="comment-options">
+                <div class="clickable-like" onclick="likePost('{{ post.id }}')">
+                    <span id="likeCount{{ post.id }}">0</span> Likes
+                </div>
+                <div class="clickable-comment" onclick="toggleCommentArea('{{ post.id }}')">
+                    Comment
+                </div>
+            </div>
+
+            <!-- Comment area and buttons -->
+            <div id="commentArea{{ post.id }}" class="comment-area" style="display: none; max-width: 100%;">
+                <textarea class="text-area-comment" id="commentTextarea{{ post.id }}" rows="3" placeholder="Write your comment" style="width: 100%; margin-top: 15px"></textarea>
+                <div style="text-align: right; margin-top: 8px;">
+                    <button class="btn btn-success" onclick="postComment('{{ post.id }}')">Post Comment</button>
+                    <button class="btn btn-secondary" onclick="hideCommentArea('{{ post.id }}')">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Display Comments -->
+            {% if post.comments %}
+                <div class="comment-container">
+                    {% for comment in post.comments %}
+                        <article class="media comment-border">
+                            <img class="rounded-circle article-img small-profile-img" src="{{ url_for('static', filename='profile_pics/' + post.author.img_file) }}">
+                            <div class="comment">
+                                <div class="comment-metadata">
+                                    <a class="mr-2" href="{{ url_for('users.user_post', username=comment.user.username) }}" style="color: #a28089;">{{ comment.user.fullname }}</a>
+                                    <small class="text-muted">{{ comment.date_commented.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                <p>{{ comment.content }}</p>
+                            </div>
+                        </article>
+                        <hr class="comment-separator">
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
     </article>
+
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="max-width: 800px; min-width: 700px" role="document">
@@ -34,5 +130,115 @@
         </div>
         </div>
     </div>
+
+    <script>
+
+        var images = []; // Store all image URLs
+        var currentImageIndex = 0;
+
+        function toggleCommentArea(postId) {
+            var commentArea = document.getElementById('commentArea' + postId);
+            commentArea.style.display = (commentArea.style.display === 'none' || commentArea.style.display === '') ? 'block' : 'none';
+        }
+    
+        function hideCommentArea(postId) {
+            document.getElementById('commentArea' + postId).style.display = 'none';
+        }
+    
+        function postComment(postId) {
+            var commentContent = document.getElementById('commentTextarea' + postId).value;
+
+            fetch('/post_comment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'post_id': postId,
+                    'comment_content': commentContent,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Optionally, you can clear the textarea after posting the comment
+                    document.getElementById('commentTextarea' + postId).value = '';
+    
+                    // Reload the page to see the updated comments
+                    location.reload();
+                } else {
+                    alert('Failed to post comment: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error posting comment:', error);
+            });
+    
+            // Hide the comment area
+            hideCommentArea(postId);
+        }
+
+        function likePost(postId) {
+            fetch('/like_post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'post_id': postId,
+                    'user_id': '{{ current_user.id }}',  // Update with the actual way to get the user ID
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the like count
+                    document.getElementById('likeCount' + postId).innerText = data.total_likes;
+        
+                    // Toggle the like button appearance based on whether the post is liked or not
+                    var likeButton = document.querySelector('.clickable-like');
+                    likeButton.classList.toggle('liked', data.liked);
+                } else {
+                    alert('Failed to like post: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error liking post:', error);
+            });
+        }
+        
+        // Function to handle image click event
+        document.querySelectorAll('.clickable-image').forEach(function(image) {
+            image.addEventListener('click', function() {
+                var postImages = image.closest('.image-container').querySelectorAll('.clickable-image');
+                images = Array.from(postImages); // Convert NodeList to array for easier manipulation
+                currentImageIndex = Array.from(postImages).indexOf(image);
+                showImage(images[currentImageIndex].getAttribute('data-enlarged-src'));
+            });
+        });
+
+        // Function to show image in modal
+        function showImage(imageUrl) {
+            var enlargedImage = document.getElementById('enlargedImage');
+            enlargedImage.src = imageUrl;
+            $('#imageModal').modal('show');
+        }
+
+        // Function to handle next image navigation
+        document.getElementById('nextImageBtn').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent modal from closing
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            showImage(images[currentImageIndex].getAttribute('data-enlarged-src'));
+        });
+
+        // Function to handle previous image navigation
+        document.getElementById('prevImageBtn').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent modal from closing
+            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+            showImage(images[currentImageIndex].getAttribute('data-enlarged-src'));
+        });
+
+    </script>
+
 {% endblock content %}
 
