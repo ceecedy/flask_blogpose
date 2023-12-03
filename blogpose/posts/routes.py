@@ -90,6 +90,20 @@ def update_post(post_id):
     if form.validate_on_submit():
         post.title = form.title.data
         post.content = form.content.data
+        
+         # Handle image uploads (similar to the new_post route)
+        images = []
+        if 'image' in request.files:
+            for image_file in request.files.getlist('image'):
+                if image_file:
+                    filename = secure_filename(image_file.filename)
+                    image_path = os.path.join(current_app.root_path, 'static/images_upload', filename)
+                    image_file.save(image_path)
+                    images.append(filename)
+
+        # Update the post's images field
+        post.images = images
+        
         db.session.commit()
         flash(f"This post has been successfully updated!", "success")
         return redirect(url_for("posts.post", post_id = post.id))
